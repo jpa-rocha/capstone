@@ -1,0 +1,10 @@
+{% extends "scout/layout.html" %}
+{% block body%}
+{% if user.is_staff %}
+<div class='available-data'>
+{% for team in teams%}
+<p>{{team}}</p>
+{% endfor %}
+</div>df
+{% endif %}
+{% endblock %}

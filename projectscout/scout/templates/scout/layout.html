@@ -3,50 +3,62 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Auctions: {% block title %}{% endblock %}</title>
+        <title>{% block title %}Social Network{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+        <link href="{% static 'scout/styles.css' %}" rel="stylesheet">
+        {% block script %}
+        {% endblock %}
     </head>
     <body>
-        <h1>Auctions</h1>
-        <div>
-            {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
-            {% else %}
-                Not signed in.
-            {% endif %}
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand">Network</a>
+          
+            <div>
+              <ul class="navbar-nav mr-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="# " id="usercheck"><strong>#</strong></a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'team-mgmt' %}">Teams</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'player-mgmt' %}">Players</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+              </ul>
+            </div>
+          </nav>
+        
+        <div class="body">
+            {% block body %}
+            {% endblock %}
+            <div id="pages" hidden>{{lastpage}}</div>
+            <nav aria-label="Page navigation" id="pagenavigation">
+                <ul class="pagination justify-content-center" id='naviappend'>
+                    <li class="page-item disabled" id="left">
+                        <a class="page-link"  tabindex="-1" >&laquo;</a>
+                    </li>
+                    
+                    <li class="page-item" id="right">
+                        <a class="page-link"  >&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#">Active Listings</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Categories</a>
-            </li>
-            {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Create Listing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Watchlist</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Your Bids</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Log Out</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Register</a>
-                </li>
-            {% endif %}
-        </ul>
-        <hr>
-        {% block body %}
-        {% endblock %}
     </body>
 </html>

@@ -2,8 +2,15 @@ import pandas as pd
 
 
 playerinfo = pd.read_csv('csv data/playerinfo.csv')
-playerinfo['Unnamed: 2'][1:] = playerinfo['Unnamed: 2'][1:].str.slice(start=-3)
-playerinfo.to_csv('csv data/playerinfo.csv', index=False)
-playerinfo.columns.name = None
+players = pd.read_csv('csv data/playerinfo.csv', usecols=['Player', 'Nation', 'Pos', 'Squad', 'Born'])
+teams = pd.read_csv('csv data/playerinfo.csv', usecols=['Squad', 'Comp'])
+teams.to_csv('csv data/teams.csv', index=False)
+players.to_csv('csv data/players.csv', index=False)
 
-print(playerinfo.drop(index=None))
+
+teams = teams.drop_duplicates()
+teams.to_csv('csv data/teams.csv', index=False)
+teams_nodup = pd.read_csv('csv data/teams.csv')
+
+
+print(players)
