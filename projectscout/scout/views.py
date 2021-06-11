@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.files import File
 from django.shortcuts import render
 from django.urls import reverse
-from .models import League, Player, Team
+from .models import League, Player, PlayingTime, Team
 import csv
 import json
 
@@ -18,8 +18,8 @@ def index(request):
     return render(request, "scout/index.html")
 
 def team_mgmt(request):
-    # Clean CSV
-    teamsfile = open('C:/Users/janos/Desktop/Pro/cs50/Project-Scout/projectscout/scout/csv data/teams.csv', 'r', encoding= "utf-8")
+    # Ready CSV
+    teamsfile = open('C:/Users/janos/Desktop/Pro/cs50/Project-Scout/projectscout/scout/csv data/cleaned/steams.csv', 'r', encoding= "utf-8")
     teams = csv.reader(teamsfile)
     teamlist =[]
     for team in teams:
@@ -47,7 +47,8 @@ def team_mgmt(request):
     )
 
 def player_mgmt(request):
-    playerfile = open('C:/Users/janos/Desktop/Pro/cs50/Project-Scout/projectscout/scout/csv data/players.csv', 'r', encoding= "utf-8")
+    # Ready CSV
+    playerfile = open('C:/Users/janos/Desktop/Pro/cs50/Project-Scout/projectscout/scout/csv data/cleaned/players.csv', 'r', encoding= "utf-8")
     players = csv.reader(playerfile)
     playerlist = []
     for player in players:
@@ -62,7 +63,7 @@ def player_mgmt(request):
         player[4] = float(player[4])
         player[4] = int(player[4])
         
-    
+    # Create players into the DB
     for player in playerlist:
         team = Team.objects.get(name = player[3])
         playercheck = Player.objects.filter(name = player[0], team=team)
@@ -76,6 +77,38 @@ def player_mgmt(request):
         'players' : playersall
         }
     )
+
+def time_mgmt(request):
+    # Ready CSV
+    timefile = open('C:/Users/janos/Desktop/Pro/cs50/Project-Scout/projectscout/scout/csv data/cleaned/time.csv', 'r', encoding= "utf-8")
+    time = csv.reader(timefile)
+    timelist = []
+    for entry in time:
+        timelist.append(entry)
+    timelist = timelist[2:]
+
+    # Enter time stats into DB
+    for entry in timelist:
+        player = Player.objects.get(id = entry[0])
+        statcheck = PlayingTime.objects.filter(player = player.id)
+        if statcheck.exists():
+            pass
+        else:
+            newstat = PlayingTime.objects.create(player=player, matchesplayed = entry[1], starts = entry[2],
+                                                 minutes = entry[3], minutesper90 = entry[4])
+            newstat.save()
+
+
+    times = PlayingTime.objects.all()
+    
+
+
+
+    return render(request, "scout/time-mgmt.html",{
+        'times' : times
+        }
+    )
+
 
 
 

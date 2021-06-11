@@ -2,8 +2,8 @@
 {% block body%}
 {% if user.is_staff %}
 <div class='available-data'>
-{% for entry in time%}
-<p>{{entry}}</p>
+{% for time in times%}
+<p>{{time}}</p>
 {% endfor %}
 </div>df
 {% endif %}

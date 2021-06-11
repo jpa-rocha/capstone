@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import CharField, IntegerField
+from django.db.models.fields import CharField, FloatField, IntegerField
 from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
@@ -44,3 +44,10 @@ class Player(models.Model):
         }
     def __str__(self):
         return self.name
+
+class PlayingTime(models.Model):
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    matchesplayed = IntegerField()
+    starts = IntegerField()
+    minutes = IntegerField()
+    minutesper90 = FloatField()

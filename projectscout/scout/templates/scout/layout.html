@@ -22,12 +22,16 @@
                         <a class="nav-link" href="# " id="usercheck"><strong>#</strong></a>
                     </li>
                 {% endif %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'team-mgmt' %}">Teams</a>
-                </li>
+                
                 {% if user.is_authenticated %}
                     <li class="nav-item">
+                    <a class="nav-link" href="{% url 'team-mgmt' %}">Teams</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'player-mgmt' %}">Players</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'time-mgmt' %}">Time</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
