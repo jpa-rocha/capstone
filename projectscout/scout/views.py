@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.files import File
 from django.shortcuts import render
 from django.urls import reverse
-from .models import League, Player, PlayingTime, Team
+from .models import GeneralStats, League, Player, PlayingTime, Team
 import csv
 import json
 
@@ -100,12 +100,38 @@ def time_mgmt(request):
 
 
     times = PlayingTime.objects.all()
-    
-
-
-
     return render(request, "scout/time-mgmt.html",{
         'times' : times
+        }
+    )
+
+def genstats_mgmt(request):
+    # Ready CSV
+    genstatsfile = open('C:/Users/janos/Desktop/Pro/cs50/Project-Scout/projectscout/scout/csv data/cleaned/generalstats.csv', 'r', encoding= "utf-8")
+    genstats = csv.reader(genstatsfile)
+    genstatslist = []
+    for entry in genstats:
+        genstatslist.append(entry)
+    genstatslist = genstatslist[2:]
+    # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
+    rangestats = range(len(genstatslist))
+    for i in rangestats:
+        genstatslist = genstatslist[i:]
+        for entry in genstatslist:
+            player = Player.objects.get(id = entry[0])
+            statcheck = GeneralStats.objects.filter(player = player.id)
+            if statcheck.exists():
+                pass
+            else:
+                newstat = GeneralStats.objects.create(player=player, goals = entry[1], assists = entry[2],
+                                                    nonPKgoals = entry[3], PKgoals = entry[4], attemptedPK = entry[5],
+                                                    yellowcards = entry[6], redcards = entry[7])
+                newstat.save()
+        
+        genstats = GeneralStats.objects.all()
+        
+        return render(request, "scout/genstats-mgmt.html",{
+            'genstats' : genstats
         }
     )
 

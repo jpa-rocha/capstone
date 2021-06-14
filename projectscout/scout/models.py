@@ -51,3 +51,36 @@ class PlayingTime(models.Model):
     starts = IntegerField()
     minutes = IntegerField()
     minutesper90 = FloatField()
+    def serialize(self):
+        return {
+            'player' : self.player.name,
+            'matches' : self.matchesplayed,
+            'starts' : self.starts,
+            'minutes' : self.minutes,
+            'per90' : self.minutesper90
+        }
+    def __str__(self):
+        return self.player.name
+
+class GeneralStats(models.Model):
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    goals = IntegerField()
+    assists = IntegerField()
+    nonPKgoals = IntegerField()
+    PKgoals = IntegerField()
+    attemptedPK = IntegerField()
+    yellowcards = IntegerField()
+    redcards = IntegerField()
+    def serialize(self):
+        return {
+            'player' : self.player.name,
+            'goals' : self.goals,
+            'assists' : self.assists,
+            'nonPkgoals' : self.nonPKgoals,
+            'PKgoals' : self.PKgoals,
+            'attemptedPK' : self.attemptedPK,
+            'yellowcards' : self.yellowcards,
+            'redcards' : self.redcards
+        }
+    def __str__(self):
+        return self.player.name
