@@ -1,10 +1,15 @@
 {% extends "scout/layout.html" %}
 {% block body%}
 {% if user.is_staff %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="teams">
+    <button type="submit">Upload</button>
+  </form>
 <div class='available-data'>
-{% for entry in time%}
-<p>{{entry}}</p>
+{% for team in teams%}
+<p>{{team.name}}</p>
 {% endfor %}
-</div>df
+</div>
 {% endif %}
 {% endblock %}

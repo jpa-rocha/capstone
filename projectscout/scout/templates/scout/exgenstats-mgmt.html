@@ -1,0 +1,12 @@
+{% extends "scout/layout.html" %}
+{% block body%}
+{% if user.is_staff %}
+<div class='available-data'>
+{% for genstat in genstats%}
+<p>{{exgenstat.player}} - {{exgenstat.expectedgoals}} - {{exgenstat.nonPKexpectedgoals}} - 
+    {{exgenstat.expectedassists}} - {{exgenstat.exnonPKgoalsandassists}}
+</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

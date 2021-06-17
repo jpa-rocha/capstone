@@ -2,9 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import CharField, FloatField, IntegerField
+from django.db.models.fields.files import FileField
 from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
+class DataStorage(models.Model):
+    file = FileField(upload_to='uploads/')
+
+
 
 class League(models.Model):
     name = CharField(max_length=20)
@@ -81,6 +86,61 @@ class GeneralStats(models.Model):
             'attemptedPK' : self.attemptedPK,
             'yellowcards' : self.yellowcards,
             'redcards' : self.redcards
+        }
+    def __str__(self):
+        return self.player.name
+
+class ExpectedGeneralStats(models.Model):
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    expectedgoals = FloatField()
+    nonPKexpectedgoals = FloatField()
+    expectedassists = FloatField()
+    exnonPKgoalsandassists = FloatField()
+    def serialize(self):
+        return {
+            'player' : self.player.name,
+            'xgoals' : self.expectedgoals,
+            'nonPKxgoals' : self.nonPKexpectedgoals,
+            'xassists' : self.expectedassists,
+            'xnonPKganda' : self.exnonPKgoalsandassists
+        }  
+    def __str__(self):
+        return self.player.name
+
+class GeneralStatsPer90(models.Model):
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    goals = FloatField()
+    assists = FloatField()
+    goalsplusassists = FloatField()
+    nonPKgoals = FloatField()
+    nonPKgoalsplusassists = FloatField()
+    def serialize(self):
+        return {
+            'player' : self.player.name,
+            'goals' : self.goals,
+            'assists' : self.assists,
+            'goals+assists' : self.goalsplusassists,
+            'nonPkgoals' : self.nonPKgoals,
+            'nonPKgoals+assists' : self.nonPKgoalsplusassists,
+        }
+    def __str__(self):
+        return self.player.name
+
+class ExpectedGeneralStatsPer90(models.Model):
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    exgoals = FloatField()
+    exassists = FloatField()
+    exgoalsplusassists = FloatField()
+    exnonPKgoals = FloatField()
+    exnonPKgoalsplusassists = FloatField()
+    def serialize(self):
+        return {
+            'player' : self.player.name,
+            'exgoals' : self.exgoals,
+            'exassists' : self.exassists,
+            'exgoals+assists' : self.exgoalsplusassists,
+            'exnonPkgoals' : self.exnonPKgoals,
+            'exnonPKgoals+assists' : self.exnonPKgoalsplusassists,
         }
     def __str__(self):
         return self.player.name
