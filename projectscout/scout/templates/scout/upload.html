@@ -1,0 +1,143 @@
+{% extends "scout/layout.html" %}
+{% block body%}
+{% if user.is_staff %}
+<div class="container-fluid">
+    <div class="row row-cols-4">
+    
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Teams</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="teams">
+                        <input type="submit" name="teams" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorteam %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorteam}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Players</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="players">
+                        <input type="submit" name="players" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorplayer %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorplayer}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Time</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="time">
+                        <input type="submit" name="time" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errortime %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errortime}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>General Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="general">
+                        <input type="submit" name="general" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorgeneral %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorgeneral}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Expected General Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="exgen">
+                        <input type="submit" name="exgen" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorexgen %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorexgen}}</span>
+                </div>
+                {% endif %}
+            </div> 
+        </div>  
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>General Statistics Per 90</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="generalper90">
+                        <input type="submit" name="generalper90" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorgeneralper90 %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorgeneralper90}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Expected General Statistics Per 90</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="exgenper90">
+                        <input type="submit" name="exgenper90" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorexgenper90 %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorexgenper90}}</span>
+                </div>
+                {% endif %}
+            </div> 
+        </div>  
+    </div>  
+</div>
+{% endif %}
+{% endblock %}
