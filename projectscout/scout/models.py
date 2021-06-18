@@ -1,16 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import CharField, FloatField, IntegerField
-from django.db.models.fields.files import FileField
 from django.db.models.fields.related import ForeignKey
 
 # Create your models here.
-class DataStorage(models.Model):
-    file = FileField(upload_to='uploads/')
-
-
-
 class League(models.Model):
     name = CharField(max_length=20)
     def serialize(self):
@@ -67,80 +60,46 @@ class PlayingTime(models.Model):
     def __str__(self):
         return self.player.name
 
-class GeneralStats(models.Model):
+class MiscStats(models.Model):
     player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
-    goals = IntegerField()
-    assists = IntegerField()
-    nonPKgoals = IntegerField()
-    PKgoals = IntegerField()
-    attemptedPK = IntegerField()
     yellowcards = IntegerField()
     redcards = IntegerField()
+    twoyellows = IntegerField()
+    foulscommited = IntegerField()
+    foulsdrawn = IntegerField()
+    offsides = IntegerField()
+    PKwon = IntegerField()
+    PKconceded = IntegerField()
+    owngoals = IntegerField()
+    ballsrecovered = IntegerField()
     def serialize(self):
         return {
             'player' : self.player.name,
-            'goals' : self.goals,
-            'assists' : self.assists,
-            'nonPkgoals' : self.nonPKgoals,
-            'PKgoals' : self.PKgoals,
-            'attemptedPK' : self.attemptedPK,
             'yellowcards' : self.yellowcards,
-            'redcards' : self.redcards
+            'redcards' : self.redcards,
+            '2yellows' : self.twoyellows,
+            'foulscommited' : self.foulscommited,
+            'foulsdrawn' : self.foulsdrawn,
+            'offsides' : self.offsides,
+            'PKwon' : self.PKwon,
+            'PKconceded' : self.PKconceded,
+            'OG' : self.owngoals,
+            'ballsrecovered' : self.ballsrecovered
         }
     def __str__(self):
         return self.player.name
 
-class ExpectedGeneralStats(models.Model):
+class AerialDuels(models.Model):
     player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
-    expectedgoals = FloatField()
-    nonPKexpectedgoals = FloatField()
-    expectedassists = FloatField()
-    exnonPKgoalsandassists = FloatField()
+    won = IntegerField()
+    lost = IntegerField()
+    percentagewon = FloatField()
     def serialize(self):
         return {
             'player' : self.player.name,
-            'xgoals' : self.expectedgoals,
-            'nonPKxgoals' : self.nonPKexpectedgoals,
-            'xassists' : self.expectedassists,
-            'xnonPKganda' : self.exnonPKgoalsandassists
-        }  
-    def __str__(self):
-        return self.player.name
-
-class GeneralStatsPer90(models.Model):
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
-    goals = FloatField()
-    assists = FloatField()
-    goalsplusassists = FloatField()
-    nonPKgoals = FloatField()
-    nonPKgoalsplusassists = FloatField()
-    def serialize(self):
-        return {
-            'player' : self.player.name,
-            'goals' : self.goals,
-            'assists' : self.assists,
-            'goals+assists' : self.goalsplusassists,
-            'nonPkgoals' : self.nonPKgoals,
-            'nonPKgoals+assists' : self.nonPKgoalsplusassists,
-        }
-    def __str__(self):
-        return self.player.name
-
-class ExpectedGeneralStatsPer90(models.Model):
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
-    exgoals = FloatField()
-    exassists = FloatField()
-    exgoalsplusassists = FloatField()
-    exnonPKgoals = FloatField()
-    exnonPKgoalsplusassists = FloatField()
-    def serialize(self):
-        return {
-            'player' : self.player.name,
-            'exgoals' : self.exgoals,
-            'exassists' : self.exassists,
-            'exgoals+assists' : self.exgoalsplusassists,
-            'exnonPkgoals' : self.exnonPKgoals,
-            'exnonPKgoals+assists' : self.exnonPKgoalsplusassists,
+            'aerialwon' : self.won,
+            'aeriallost' : self.lost,
+            'percentagewon' : self.percentagewon
         }
     def __str__(self):
         return self.player.name

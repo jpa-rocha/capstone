@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.files import File
 from django.shortcuts import render
 from django.urls import reverse
-from .models import ExpectedGeneralStats, ExpectedGeneralStatsPer90, GeneralStats, GeneralStatsPer90, League, Player, PlayingTime, Team, DataStorage
+from .models import MiscStats, League, Player, PlayingTime, Team, AerialDuels
 import csv
 import json
 
@@ -72,11 +72,11 @@ def upload_files(request):
                         'errortime' : 'You did not upload a file.'
                     })
 
-        # Directs GENERAL STATS updates to the appropriate manager
-        elif request.POST.get('general'):
+        # Directs MISC STATS updates to the appropriate manager
+        elif request.POST.get('misc'):
             try:
-                if request.FILES['general'].name == 'generalstats.csv':
-                    if genstats_mgmt(request) == 'Y':
+                if request.FILES['misc'].name == 'miscstats.csv':
+                    if miscstats_mgmt(request) == 'Y':
                         return HttpResponse(status=204)
                     else: 
                         return HttpResponse(status=500)
@@ -86,24 +86,24 @@ def upload_files(request):
                     })
             except:
                 return render(request, 'scout/upload.html', {
-                        'errorgeneral' : 'You tried to upload the wrong file.'
+                        'errormisc' : 'You tried to upload the wrong file.'
                     })
 
         # Directs EXPECTED GENERAL STATS updates to the appropriate manager
-        elif request.POST.get('exgen'):
+        elif request.POST.get('aerial'):
             try:
-                if request.FILES['exgen'].name == 'expectedgeneralstats.csv':
-                    if exgenstats_mgmt(request) == 'Y':
+                if request.FILES['aerial'].name == 'aerialstats.csv':
+                    if aerialstats_mgmt(request) == 'Y':
                         return HttpResponse(status=204)
                     else: 
                         return HttpResponse(status=500)
                 else:
                     return render(request, 'scout/upload.html', {
-                        'errorexgen' : 'You tried to upload the wrong file.'
+                        'erroraerial' : 'You tried to upload the wrong file.'
                     })
             except:
                  return render(request, 'scout/upload.html', {
-                        'errorexgen' : 'You tried to upload the wrong file.'
+                        'erroraerial' : 'You tried to upload the wrong file.'
                     })
 
 
@@ -159,9 +159,10 @@ def team_mgmt(request):
                 
             # Create team info in DB with corresponding league
             for team in teamlist:
+                print(team)
                 league = League.objects.get(name = team[1])
-                teamcheck = Team.objects.get(name = team[0], league=league)
-                if teamcheck:
+                teamcheck = Team.objects.filter(name = team[0], league=league)
+                if teamcheck.exists():
                     pass
                 else:
                     newteam = Team.objects.create(name = team[0], league=league)
@@ -241,31 +242,32 @@ def time_mgmt(request):
 
             
 
-def genstats_mgmt(request):
+def miscstats_mgmt(request):
      if request.method == 'POST':
         try:
-            genstatsfile = request.FILES['general'].read().decode('UTF-8').splitlines()
+            miscstatsfile = request.FILES['misc'].read().decode('UTF-8').splitlines()
             # Ready CSV
-            genstats = csv.reader(genstatsfile)
-            genstatslist = []
-            for entry in genstats:
-                genstatslist.append(entry)
-            genstatslist = genstatslist[2:]
+            miscstats = csv.reader(miscstatsfile)
+            miscstatslist = []
+            for entry in miscstats:
+                miscstatslist.append(entry)
+            miscstatslist = miscstatslist[2:]
             # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
-            rangestats = range(len(genstatslist))
+            rangestats = range(len(miscstatslist))
             for i in rangestats:
-                genstatslist = genstatslist[i:]
-                for entry in genstatslist:
+                miscstatslist = miscstatslist[i:]
+                for entry in miscstatslist:
                     player = Player.objects.get(id = entry[0])
-                    statcheck = GeneralStats.objects.filter(player = player.id)
+                    statcheck = MiscStats.objects.filter(player = player.id)
                     if statcheck.exists():
                         pass
                     else:
-                        newstat = GeneralStats.objects.create(player=player, goals = entry[1], assists = entry[2],
-                                                            nonPKgoals = entry[3], PKgoals = entry[4], attemptedPK = entry[5],
-                                                            yellowcards = entry[6], redcards = entry[7])
+                        newstat = MiscStats.objects.create(player=player, yellowcards = entry[1], redcards = entry[2],
+                                                            twoyellows = entry[3], foulscommited = entry[4], foulsdrawn = entry[5],
+                                                            offsides = entry[6], PKwon = entry[7], PKconceded = entry[8],
+                                                            owngoals = entry[9], ballsrecovered = entry[10])
                         newstat.save()
-                
+                    
             result = 'Y'
             return result
 
@@ -273,128 +275,35 @@ def genstats_mgmt(request):
             result = 'N'
             return result
             
-
-def exgenstats_mgmt(request):
+def aerialstats_mgmt(request):
     if request.method == 'POST':
         try:
-            exgenstatsfile = request.FILES['exgen'].read().decode('UTF-8').splitlines()
+            aerialstatsfile = request.FILES['aerial'].read().decode('UTF-8').splitlines()
             # Ready CSV
-            exgenstats = csv.reader(exgenstatsfile)
-            exgenstatslist = []
-            for entry in exgenstats:
-                exgenstatslist.append(entry)
-            exgenstatslist = exgenstatslist[2:]
+            aerialstats = csv.reader(aerialstatsfile)
+            aerialstatslist = []
+            for entry in aerialstats:
+                aerialstatslist.append(entry)
+            aerialstatslist = aerialstatslist[2:]
             # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
-            rangestats = range(len(exgenstatslist))
+            rangestats = range(len(aerialstatslist))
             for i in rangestats:
-                exgenstatslist = exgenstatslist[i:]
-                for entry in exgenstatslist:
+                aerialstatslist = aerialstatslist[i:]
+                for entry in aerialstatslist:
                     player = Player.objects.get(id = entry[0])
-                    statcheck = ExpectedGeneralStats.objects.filter(player = player.id)
+                    statcheck = AerialDuels.objects.filter(player = player.id)
                     if statcheck.exists():
                         pass
                     else:
-                        if entry[1] =='':
-                            entry[1] = 0
-                        if entry[2] =='':
-                            entry[2] = 0
-                        if entry[3] =='':
-                            entry[3] = 0
-                        if entry[4] =='':
-                            entry[4] = 0
-                        newstat = ExpectedGeneralStats.objects.create(player=player, expectedgoals = entry[1], nonPKexpectedgoals = entry[2],
-                                                            expectedassists = entry[3], exnonPKgoalsandassists = entry[4])
+                        newstat = AerialDuels.objects.create(player=player, won = entry[1], lost = entry[2], percentagewon = entry[3])
                         newstat.save()
-                
+                    
             result = 'Y'
             return result
 
         except:
             result = 'N'
             return result
-
-def genstatsper90_mgmt(request):
-    if request.method == 'POST':
-        try:
-            genstatsper90file = request.FILES['generalper90'].read().decode('UTF-8').splitlines()
-            # Ready CSV
-            genstatsper90 = csv.reader(genstatsper90file)
-            genstatsper90list = []
-            for entry in genstatsper90:
-                genstatsper90list.append(entry)
-            genstatsper90list = genstatsper90list[2:]
-            # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
-            rangestats = range(len(genstatsper90list))
-            for i in rangestats:
-                genstatsper90list = genstatsper90list[i:]
-                for entry in genstatsper90list:
-                    player = Player.objects.get(id = entry[0])
-                    statcheck = GeneralStatsPer90.objects.filter(player = player.id)
-                    if statcheck.exists():
-                        pass
-                    else:
-                        if entry[1] =='':
-                            entry[1] = 0
-                        if entry[2] =='':
-                            entry[2] = 0
-                        if entry[3] =='':
-                            entry[3] = 0
-                        if entry[4] =='':
-                            entry[4] = 0
-                        if entry[5] =='':
-                            entry[5] = 0
-                        newstat = GeneralStatsPer90.objects.create(player=player, goals = entry[1], assists = entry[2],
-                                                            goalsplusassists = entry[3], nonPKgoals = entry[4], nonPKgoalsplusassists = entry[5])
-                        newstat.save()
-                
-            result = 'Y'
-            return result
-
-        except:
-            result = 'N'
-            return result
-
-def exgenstatsper90_mgmt(request):
-    if request.method == 'POST':
-        try:
-            exgenstatsper90file = request.FILES['exgenper90'].read().decode('UTF-8').splitlines()
-            # Ready CSV
-            exgenstatsper90 = csv.reader(exgenstatsper90file)
-            exgenstatsper90list = []
-            for entry in exgenstatsper90:
-                exgenstatsper90list.append(entry)
-            exgenstatsper90list = exgenstatsper90list[2:]
-            # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
-            rangestats = range(len(exgenstatsper90list))
-            for i in rangestats:
-                exgenstatsper90list = exgenstatsper90list[i:]
-                for entry in exgenstatsper90list:
-                    player = Player.objects.get(id = entry[0])
-                    statcheck = ExpectedGeneralStatsPer90.objects.filter(player = player.id)
-                    if statcheck.exists():
-                        pass
-                    else:
-                        if entry[1] =='':
-                            entry[1] = 0
-                        if entry[2] =='':
-                            entry[2] = 0
-                        if entry[3] =='':
-                            entry[3] = 0
-                        if entry[4] =='':
-                            entry[4] = 0
-                        if entry[5] =='':
-                            entry[5] = 0
-                        newstat = ExpectedGeneralStatsPer90.objects.create(player=player, exgoals = entry[1], exassists = entry[2],
-                                                            exgoalsplusassists = entry[3], exnonPKgoals = entry[4], exnonPKgoalsplusassists = entry[5])
-                        newstat.save()
-                
-            result = 'Y'
-            return result
-
-        except:
-            result = 'N'
-            return result
-
 
 def login_view(request):
     if request.method == 'POST':

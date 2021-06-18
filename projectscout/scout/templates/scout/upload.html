@@ -64,18 +64,18 @@
         <div class="col">
             <div class="card mb-4">
                 <div class="card-header">
-                    <span class='uploadtitel'>General Statistics</span>
+                    <span class='uploadtitel'>Misc Statistics</span>
                 </div>
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="file" name="general">
-                        <input type="submit" name="general" value="Upload" class="uploadbtn">
+                        <input type="file" name="misc">
+                        <input type="submit" name="misc" value="Upload" class="uploadbtn">
                     </form>
                 </div>
-                {% if errorgeneral %}
+                {% if errormisc %}
                 <div class="card-footer">
-                    <span class='uploadfooter'>{{errorgeneral}}</span>
+                    <span class='uploadfooter'>{{errormisc}}</span>
                 </div>
                 {% endif %}
             </div>
@@ -83,60 +83,22 @@
         <div class="col">
             <div class="card mb-4">
                 <div class="card-header">
-                    <span class='uploadtitel'>Expected General Statistics</span>
+                    <span class='uploadtitel'>Aerial Statistics</span>
                 </div>
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="file" name="exgen">
-                        <input type="submit" name="exgen" value="Upload" class="uploadbtn">
+                        <input type="file" name="aerial">
+                        <input type="submit" name="aerial" value="Upload" class="uploadbtn">
                     </form>
                 </div>
-                {% if errorexgen %}
+                {% if erroraerial %}
                 <div class="card-footer">
-                    <span class='uploadfooter'>{{errorexgen}}</span>
-                </div>
-                {% endif %}
-            </div> 
-        </div>  
-        <div class="col">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <span class='uploadtitel'>General Statistics Per 90</span>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="file" name="generalper90">
-                        <input type="submit" name="generalper90" value="Upload" class="uploadbtn">
-                    </form>
-                </div>
-                {% if errorgeneralper90 %}
-                <div class="card-footer">
-                    <span class='uploadfooter'>{{errorgeneralper90}}</span>
+                    <span class='uploadfooter'>{{erroraerial}}</span>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <div class="col">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <span class='uploadtitel'>Expected General Statistics Per 90</span>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="file" name="exgenper90">
-                        <input type="submit" name="exgenper90" value="Upload" class="uploadbtn">
-                    </form>
-                </div>
-                {% if errorexgenper90 %}
-                <div class="card-footer">
-                    <span class='uploadfooter'>{{errorexgenper90}}</span>
-                </div>
-                {% endif %}
-            </div> 
-        </div>  
     </div>  
 </div>
 {% endif %}
