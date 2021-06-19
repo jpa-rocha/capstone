@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.files import File
 from django.shortcuts import render
 from django.urls import reverse
-from .models import MiscStats, League, Player, PlayingTime, Team, AerialDuels
+from .models import MiscStats, League, Player, PlayingTime, ShootingStats, Team, AerialDuels
 import csv
 import json
 
@@ -89,7 +89,7 @@ def upload_files(request):
                         'errormisc' : 'You tried to upload the wrong file.'
                     })
 
-        # Directs EXPECTED GENERAL STATS updates to the appropriate manager
+        # Directs AERIAL STATS updates to the appropriate manager
         elif request.POST.get('aerial'):
             try:
                 if request.FILES['aerial'].name == 'aerialstats.csv':
@@ -106,38 +106,23 @@ def upload_files(request):
                         'erroraerial' : 'You tried to upload the wrong file.'
                     })
 
-
-        elif request.POST.get('generalper90'):
+        # Directs SHOOTING STATS updates to the appropriate manager
+        elif request.POST.get('shooting'):
             try:
-                if request.FILES['generalper90'].name == 'generalstatsper90.csv':
-                    if genstatsper90_mgmt(request) == 'Y':
+                if request.FILES['shooting'].name == 'shootingstats.csv':
+                    if shootingstats_mgmt(request) == 'Y':
                         return HttpResponse(status=204)
                     else: 
                         return HttpResponse(status=500)
                 else:
                     return render(request, 'scout/upload.html', {
-                        'errorgeneralper90' : 'You tried to upload the wrong file.'
-                    })
-            except:
-                return render(request, 'scout/upload.html', {
-                        'errorgeneralper90' : 'You tried to upload the wrong file.'
-                    }) 
-
-        elif request.POST.get('exgenper90'):
-            try:
-                if request.FILES['exgenper90'].name == 'expectedgeneralstatsper90.csv':
-                    if exgenstatsper90_mgmt(request) == 'Y':
-                        return HttpResponse(status=204)
-                    else: 
-                        return HttpResponse(status=500)
-                else:
-                    return render(request, 'scout/upload.html', {
-                        'errorexgenper90' : 'You tried to upload the wrong file.'
+                        'errorshooting' : 'You tried to upload the wrong file.'
                     })
             except:
                  return render(request, 'scout/upload.html', {
-                        'errorexgenper90' : 'You tried to upload the wrong file.'
-                    })      
+                        'errorshooting' : 'You tried to upload the wrong file.'
+                    })
+   
     else:
         return render(request, 'scout/upload.html')
 
@@ -298,6 +283,43 @@ def aerialstats_mgmt(request):
                         newstat = AerialDuels.objects.create(player=player, won = entry[1], lost = entry[2], percentagewon = entry[3])
                         newstat.save()
                     
+            result = 'Y'
+            return result
+
+        except:
+            result = 'N'
+            return result
+
+def shootingstats_mgmt(request):
+    if request.method == 'POST':
+        try:
+            shootingstatsfile = request.FILES['shooting'].read().decode('UTF-8').splitlines()
+            # Ready CSV
+            shootingstats = csv.reader(shootingstatsfile)
+            shootingstatslist = []
+            for entry in shootingstats:
+                shootingstatslist.append(entry)
+            shootingstatslist = shootingstatslist[2:]
+            # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
+            rangestats = range(len(shootingstatslist))
+            for i in rangestats:
+                shootingstatslist = shootingstatslist[i:]
+                for entry in shootingstatslist:
+                    player = Player.objects.get(id = entry[0])
+                    statcheck = ShootingStats.objects.filter(player = player.id)
+                    if statcheck.exists():
+                        pass
+                    else:
+                        newstat = ShootingStats.objects.create(player=player, goals = entry[1], shots = entry[2],
+                                                            shotsontarget = entry[3], pershotsontarget = entry[4],
+                                                            shotsper90 = entry[5], shotsontargetper90 = entry[6], 
+                                                            goalspershot = entry[7], goalpershotontarget = entry[8],
+                                                            avgdistance = entry[9], freekick = entry[10], PKmade = entry[11],
+                                                            PKattempted = entry[12], exgoals = entry[13], exnonPKgoals = entry[14],
+                                                            nonPKexgoalspershot = entry[15], goalsminusexgoals = entry[16],
+                                                            nonpkgoalsminusexnonPKgoals = entry[17])
+                        newstat.save()
+    
             result = 'Y'
             return result
 

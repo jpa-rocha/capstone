@@ -103,3 +103,51 @@ class AerialDuels(models.Model):
         }
     def __str__(self):
         return self.player.name
+
+class ShootingStats(models.Model):
+    
+    #Standard stats
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    goals = IntegerField()
+    shots = IntegerField()
+    shotsontarget = IntegerField()
+    pershotsontarget = FloatField()
+    shotsper90 = FloatField()
+    shotsontargetper90 = FloatField()
+    goalspershot = FloatField()
+    goalpershotontarget = FloatField()
+    avgdistance = FloatField()
+    freekick = IntegerField()
+    PKmade = IntegerField()
+    PKattempted = IntegerField()
+
+    #Expected Stats
+    exgoals = FloatField()
+    exnonPKgoals = FloatField()
+    nonPKexgoalspershot = FloatField()
+    goalsminusexgoals = FloatField()
+    nonpkgoalsminusexnonPKgoals = FloatField()
+
+    def serialize(self):
+        return {
+            'player' : self.player.name,
+            'goals' : self.goals,
+            'shots' : self.shots,
+            'shotsontarget' : self.shotsontarget,
+            'pershotsontarget' : self.pershotsontarget,
+            'shotsper90' : self.shotsper90,
+            'shotsontargetper90' : self.shotsontargetper90,
+            'goalspershot' : self.goalspershot,
+            'goalspershotontarget' : self.goalpershotontarget,
+            'avgdistance' : self.avgdistance,
+            'freekick' : self.freekick,
+            'PKmade' : self.PKmade,
+            'PKattempted' : self.PKattempted,
+            'exgoals' : self.exgoals,
+            'exnonPKgoals' : self.exnonPKgoals,
+            'nonPKexgoalspershot' : self.nonPKexgoalspershot,
+            'goalminusexgoals' : self.goalsminusexgoals,
+            'nonpkgoalsminusexnonPKgoals' : self.nonpkgoalsminusexnonPKgoals
+        }
+    def __str__(self):
+        return self.player.name

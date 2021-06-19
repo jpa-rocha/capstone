@@ -99,6 +99,25 @@
                 {% endif %}
             </div>
         </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Shooting Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="shooting">
+                        <input type="submit" name="shooting" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorshooting %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorshooting}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>  
 </div>
 {% endif %}
