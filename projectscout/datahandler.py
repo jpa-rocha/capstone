@@ -30,5 +30,40 @@ shootingstats = pd.read_csv('scout/csv data/shooting.csv',usecols=[0,9,10,11,12,
 shootingstats.fillna(0, inplace=True)
 shootingstats.to_csv('scout/csv data/cleaned/shootingstats.csv', index=False)
 
+# Cleaned possession stats CSV
+possessionstats = pd.read_csv('scout/csv data/possession.csv',usecols=[0,9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,30,31,32])
+possessionstats.fillna(0, inplace=True)
+possessionstats.to_csv('scout/csv data/cleaned/possessionstats.csv', index=False)
 
-print(shootingstats)
+# Cleaned passing stats CSV
+passingstats = pd.read_csv('scout/csv data/passing.csv',usecols=[0,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30])
+passingstats.fillna(0, inplace=True)
+passingstats.to_csv('scout/csv data/cleaned/passingstats.csv', index=False)
+
+# Cleaned pass types stats CSV
+passtypestats = pd.read_csv('scout/csv data/passtypes.csv',usecols=[0,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33])
+passtypestats.fillna(0, inplace=True)
+passtypestats.to_csv('scout/csv data/cleaned/passtypesstats.csv', index=False)
+
+# Cleaned defensive stats CSV
+defensivestats = pd.read_csv('scout/csv data/defensiveactions.csv',usecols=[0,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31])
+defensivestats.fillna(0, inplace=True)
+defensivestats.to_csv('scout/csv data/cleaned/defensivestats.csv', index=False)
+
+# Cleaned goal/shot creation stats CSV
+goalshotcreationstats = pd.read_csv('scout/csv data/goalshotcreation.csv',usecols=[0,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24])
+goalshotcreationstats.fillna(0, inplace=True)
+goalshotcreationstats.to_csv('scout/csv data/cleaned/goalshotcreationstats.csv', index=False)
+
+# Cleaned goalkeeping stats CSV
+goalkeepingstats = pd.read_csv('scout/csv data/goalkeeping.csv')
+advgoalkeepingstats = pd.read_csv('scout/csv data/advgoalkeeping.csv')
+fullgoalkeepingstats = goalkeepingstats.merge(advgoalkeepingstats, left_on = 'Unnamed: 0', right_on = 'Unnamed: 0')
+fullgoalkeepingstats.to_csv('scout/csv data/fullgoalkeeping.csv', index=False)
+finalgoalkeepingstats = pd.read_csv('scout/csv data/fullgoalkeeping.csv', usecols=[1,4,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,37,38,39,40,41,42,
+                                                                                  43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59])
+finalgoalkeepingstats.fillna(0, inplace=True)
+finalgoalkeepingstats.to_csv('scout/csv data/cleaned/fullgoalkeepingstats.csv', index=False)
+
+print(fullgoalkeepingstats.keys())
+

@@ -118,6 +118,120 @@
                 {% endif %}
             </div>
         </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Possession Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="possession">
+                        <input type="submit" name="possession" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorpossession %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorpossession}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Passing Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="passing">
+                        <input type="submit" name="passing" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorpassing %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorpassing}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Pass Types Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="passtypes">
+                        <input type="submit" name="passtypes" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorpasstypes %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorpasstypes}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Defensive Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="defensive">
+                        <input type="submit" name="defensive" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errordefensive %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errordefensive}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Goal and Shot Creation Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="goalshotcreation">
+                        <input type="submit" name="goalshotcreation" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorgoalshotcreation %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorgoalshotcreation}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+         <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Goalkeeping Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="goalkeeping">
+                        <input type="submit" name="goalkeeping" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorgoalkeeping %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorgoalkeeping}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>  
 </div>
 {% endif %}
