@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('player <int:player_id>', views.player, name='player'),
     
     # DB management urls
     path('upload', views.upload_files, name='upload'),
