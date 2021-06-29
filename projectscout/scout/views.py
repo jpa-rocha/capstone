@@ -8,14 +8,19 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import MiscStats, League, Player, PlayingTime, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats
 from .dataloader import team_mgmt, player_mgmt, time_mgmt, miscstats_mgmt, aerialstats_mgmt, shootingstats_mgmt, possessionstats_mgmt, passingstats_mgmt, passtypesstats_mgmt, defensivestats_mgmt, goalshotcreationstats_mgmt, goalkeepingstats_mgmt
+import pandas as pd
 import csv
 import json
 
 
 # Create your views here.
 def index(request):
+    pass 
+
     return render(request, "scout/index.html")
 
+def player(request, id):
+    pass
 
 def upload_files(request):
     if request.method == 'POST':
