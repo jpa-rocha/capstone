@@ -1,5 +1,6 @@
-from .models import MiscStats, League, Player, PlayingTime, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats
+from .models import MiscStats, League, Player, PlayingTime, SalaryStats, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats
 import csv
+import json
 
 def team_mgmt(request):
     if request.method == 'POST':
@@ -416,7 +417,6 @@ def goalkeepingstats_mgmt(request):
                     team = Team.objects.get(name = entry[1])
                     player = Player.objects.get(name = entry[0], team=team)
                     statcheck = GoalkeepingStats.objects.filter(player = player.id)
-                    
                     if statcheck.exists():
                         pass
                     else:
@@ -436,6 +436,31 @@ def goalkeepingstats_mgmt(request):
 
                         newstat.save()
             
+            result = 'Y'
+            return result
+        except:
+            result = 'N'
+            return result
+
+def salary_mgmt(request):
+    if request.method == 'POST':
+        try:
+            players = Player.objects.all()
+            salaryfile = request.FILES['salary']
+            contracts = json.load(salaryfile)
+            for player in players:
+                for i in contracts:
+                    if player.name == contracts[str(i)]['name']:
+                        print('yes')
+                        statcheck = SalaryStats.objects.filter(player = player)
+                        print(statcheck)
+                        if statcheck.exists():
+                            pass
+                        else:
+                            newstat = SalaryStats.objects.create(player = player, weeklysalary = contracts[str(i)]['weeklysalary'],
+                                                            yearlysalary = contracts[str(i)]['yearlysalary'], status = contracts[str(i)]['status'],
+                                                            contractlength = contracts[str(i)]['length'], estimatedtotal = contracts[str(i)]['estimatedtotal'])     
+                            newstat.save()
             result = 'Y'
             return result
         except:

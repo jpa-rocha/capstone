@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from .models import MiscStats, League, Player, PlayingTime, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats
-from .dataloader import team_mgmt, player_mgmt, time_mgmt, miscstats_mgmt, aerialstats_mgmt, shootingstats_mgmt, possessionstats_mgmt, passingstats_mgmt, passtypesstats_mgmt, defensivestats_mgmt, goalshotcreationstats_mgmt, goalkeepingstats_mgmt
+from .dataloader import salary_mgmt, team_mgmt, player_mgmt, time_mgmt, miscstats_mgmt, aerialstats_mgmt, shootingstats_mgmt, possessionstats_mgmt, passingstats_mgmt, passtypesstats_mgmt, defensivestats_mgmt, goalshotcreationstats_mgmt, goalkeepingstats_mgmt
 import pandas as pd
 import csv
 import json
@@ -19,8 +19,13 @@ def index(request):
 
     return render(request, "scout/index.html")
 
-def player(request, id):
-    pass
+def player(request, player_id):
+    playerobj = Player.objects.get(id=player_id)
+
+    return render(request, "scout/player.html", {
+        'player' : playerobj
+    })
+
 
 def upload_files(request):
     if request.method == 'POST':
@@ -226,7 +231,25 @@ def upload_files(request):
             except:
                  return render(request, 'scout/upload.html', {
                         'errorgoalkeeping' : 'You tried to upload the wrong file.'
-                    })                                              
+                    })       
+
+        # Directs SALARY STATS updates to the appropriate manager
+        elif request.POST.get('salary'):
+            try:
+                if request.FILES['salary'].name == 'fixedcontractinfo.json':
+                    
+                    if salary_mgmt(request) == 'Y':
+                        return HttpResponse(status=204)
+                    else: 
+                        return HttpResponse(status=500)
+                else:
+                    return render(request, 'scout/upload.html', {
+                        'errorsalary' : 'You tried to upload the wrong file.'
+                    })
+            except:
+                return render(request, 'scout/upload.html', {
+                        'errorsalary' : 'You tried to upload the wrong file.'
+                    })                                                                                     
     else:
         return render(request, 'scout/upload.html')
 

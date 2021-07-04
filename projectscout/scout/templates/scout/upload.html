@@ -213,7 +213,7 @@
                 {% endif %}
             </div>
         </div>
-         <div class="col">
+        <div class="col">
             <div class="card mb-4">
                 <div class="card-header">
                     <span class='uploadtitel'>Goalkeeping Statistics</span>
@@ -228,6 +228,25 @@
                 {% if errorgoalkeeping %}
                 <div class="card-footer">
                     <span class='uploadfooter'>{{errorgoalkeeping}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>Salary Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="salary">
+                        <input type="submit" name="salary" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorsalary %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorsalary}}</span>
                 </div>
                 {% endif %}
             </div>

@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 # Cleaned player CSV
 playerinfo = pd.read_csv('scout/csv data/playerinfo.csv')
@@ -65,5 +66,29 @@ finalgoalkeepingstats = pd.read_csv('scout/csv data/fullgoalkeeping.csv', usecol
 finalgoalkeepingstats.fillna(0, inplace=True)
 finalgoalkeepingstats.to_csv('scout/csv data/cleaned/fullgoalkeepingstats.csv', index=False)
 
-print(fullgoalkeepingstats.keys())
+# Cleaned Salary information JSON
+with open('contractinfo.json', 'r',encoding='utf-8') as file:
+    contracts = json.load(file)
+    for i in contracts:
+        contracts[str(i)]['weeklysalary'] = contracts[str(i)]['weeklysalary'].replace(',','')
+        contracts[str(i)]['yearlysalary'] = contracts[str(i)]['weeklysalary'].replace(',','')
+        contracts[str(i)]['estimatedtotal'] = contracts[str(i)]['weeklysalary'].replace(',','')
+        if contracts[str(i)]['weeklysalary'][0] == '£':
+            contracts[str(i)]['weeklysalary'] = float(contracts[str(i)]['weeklysalary'][1:]) * 1.6
+        elif contracts[str(i)]['weeklysalary'][0] == '€':
+            contracts[str(i)]['weeklysalary'] = float(contracts[str(i)]['weeklysalary'][1:])
+        if contracts[str(i)]['yearlysalary'][0] == '£':  
+            contracts[str(i)]['yearlysalary'] = float(contracts[str(i)]['yearlysalary'][1:]) * 1.6
+        elif contracts[str(i)]['yearlysalary'][0] == '€':  
+            contracts[str(i)]['yearlysalary'] = float(contracts[str(i)]['yearlysalary'][1:]) 
+        if contracts[str(i)]['estimatedtotal'][0] == '£': 
+            contracts[str(i)]['estimatedtotal'] = float(contracts[str(i)]['estimatedtotal'][1:]) * 1.6
+        elif contracts[str(i)]['estimatedtotal'][0] == '€':
+            contracts[str(i)]['estimatedtotal'] = float(contracts[str(i)]['estimatedtotal'][1:])
+        
+        contracts[str(i)]['length'] = int(contracts[str(i)]['length'][0])
+    fixedfile = open('fixedcontractinfo.json', 'w',encoding='utf-8')
+    json.dump(contracts, fixedfile, indent = 4, ensure_ascii=False)
+    fixedfile.close()
+
 
