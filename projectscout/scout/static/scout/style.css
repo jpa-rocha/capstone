@@ -5,3 +5,7 @@
 .uploadbtn {
     margin-top: 1em;
 }
+
+.teamnames:hover{
+    cursor: pointer;
+}

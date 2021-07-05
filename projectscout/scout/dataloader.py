@@ -60,7 +60,6 @@ def player_mgmt(request):
                 else:
                     newplayer = Player.objects.create(name = player[0], country = player[1], position = player[2], team=team, yearborn = player[4])
                     newplayer.save()      
-            
             result = 'Y'
             return result
         except:

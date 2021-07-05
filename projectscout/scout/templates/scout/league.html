@@ -6,5 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    {{player.starts}}
+    {% for team in teams %}
+        {{team.name}}
+    {% endfor %}
 {% endblock %}

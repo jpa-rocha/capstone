@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('player/<int:player_id>', views.player, name='player'),
+    path('team/<str:team_name>', views.team, name='team'),
+    path('league/<str:league_name>', views.league, name='league'),
     
     # DB management urls
     path('upload', views.upload_files, name='upload'),

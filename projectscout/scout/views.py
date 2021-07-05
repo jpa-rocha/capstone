@@ -15,15 +15,36 @@ import json
 
 # Create your views here.
 def index(request):
-    pass 
-
-    return render(request, "scout/index.html")
+    teams = Team.objects.all()
+    teams = teams.order_by('league').all()
+    leagues = League.objects.all()
+    return render(request, "scout/index.html",{
+        'teams' : teams,
+        'leagues' : leagues
+    })
 
 def player(request, player_id):
     playerobj = Player.objects.get(id=player_id)
 
+
     return render(request, "scout/player.html", {
         'player' : playerobj
+    })
+
+def team(request, team_name):
+    print(team_name)
+    team = Team.objects.get(name=team_name)
+    players = Player.objects.filter(team_id=team.id)
+    players = players.order_by('posord').all()
+    return render(request, "scout/team.html", {
+        'players' : players
+    })
+
+def league(request, league_name):
+    league = League.objects.get(name=league_name)
+    teams = Team.objects.filter(league=league.id)
+    return render(request, "scout/team.html", {
+        'teams' : teams
     })
 
 

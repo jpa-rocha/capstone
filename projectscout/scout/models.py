@@ -32,6 +32,7 @@ class Player(models.Model):
     country = CharField(max_length=3)
     position = CharField(max_length=5)
     yearborn = IntegerField()
+    posord = IntegerField()
     team = ForeignKey(Team, on_delete=models.PROTECT, related_name='team')
     def serialize(self):
         return {
@@ -47,7 +48,7 @@ class Player(models.Model):
 class PlayingTime(models.Model):
     class Meta:
         verbose_name_plural = "Playing Time"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='playingtime')
     matchesplayed = IntegerField()
     starts = IntegerField()
     minutes = IntegerField()
@@ -66,7 +67,7 @@ class PlayingTime(models.Model):
 class MiscStats(models.Model):
     class Meta:
         verbose_name_plural = "Misc Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='misc')
     yellowcards = IntegerField()
     redcards = IntegerField()
     twoyellows = IntegerField()
@@ -97,7 +98,7 @@ class MiscStats(models.Model):
 class AerialDuels(models.Model):
     class Meta:
         verbose_name_plural = "Aerial Duels"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='aerial')
     won = IntegerField()
     lost = IntegerField()
     percentagewon = FloatField()
@@ -115,7 +116,7 @@ class ShootingStats(models.Model):
     class Meta:
         verbose_name_plural = "Shooting Stats"
     #Standard stats
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='shooting')
     goals = IntegerField()
     shots = IntegerField()
     shotsontarget = IntegerField()
@@ -163,7 +164,7 @@ class ShootingStats(models.Model):
 class PossessionStats(models.Model):
     class Meta:
         verbose_name_plural = "Possession Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='possession')
 
     # Touches location
     touches = IntegerField()
@@ -229,7 +230,7 @@ class PossessionStats(models.Model):
 class PassingStats(models.Model):
     class Meta:
         verbose_name_plural = "Passing Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='passing')
 
     # Total pass stats
     totalcomplete = IntegerField()
@@ -295,7 +296,7 @@ class PassingStats(models.Model):
 class PassTypesStats(models.Model):
     class Meta:
         verbose_name_plural = "Pass Type Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='passtypes')
     totalattempts = IntegerField()
 
     # Pass types
@@ -367,7 +368,7 @@ class PassTypesStats(models.Model):
 class DefensiveStats(models.Model):
     class Meta:
         verbose_name_plural = "Defensive Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='defensive')
 
     # Tackles
     tackles = IntegerField()
@@ -435,7 +436,7 @@ class DefensiveStats(models.Model):
 class GoalShotCreationStats(models.Model):
     class Meta:
         verbose_name_plural = "Goal and Shot Creation Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='gsc')
 
     # Shot creating actions
     shotcreatingactions = IntegerField()
@@ -487,7 +488,7 @@ class GoalShotCreationStats(models.Model):
 class GoalkeepingStats(models.Model):
     class Meta:
         verbose_name_plural = "Goalkeeping Stats"
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='goalkeeping')
 
     # Performance stats
     goalsallowed = IntegerField()
@@ -594,7 +595,7 @@ class SalaryStats(models.Model):
     class Meta:
         verbose_name_plural = "Salary Stats"
 
-    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True)
+    player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='salaries')
     weeklysalary = DecimalField(max_digits=20, decimal_places=2)
     yearlysalary = DecimalField(max_digits=20, decimal_places=2)
     status = CharField(max_length=20)
