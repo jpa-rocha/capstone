@@ -1,13 +1,53 @@
 {% extends "scout/layout.html" %}
 {% load static %}
 
+
 {% block script %}
-    <script src="{% static 'scout/inmarkt.js' %}"></script>
+    <script src="{% static "scout/team.js" %}"></script>
 {% endblock %}
 
 {% block body %}
-    
-    <div class="teamcontent">
+    <div class="generalteaminfo">
+        <p id="teamname">{{team}}</p>
+        <p id="leaguestanding"> League Standing: {{teamstats.leagueranking}}</p>
+        <p id="matchepoints"> Matches Played: {{teamstats.matchesplayed}}
+         / Points: {{teamstats.points}}
+         / Points p/Game: {{teamstats.pointspergame}}</p>
+        <p id="results"> Won: {{teamstats.matcheswon}}
+         / Drawn: {{teamstats.matchesdrawn}}
+         / Lost: {{teamstats.matcheslost}}</p>
+        <p id="goalsforinfo"> Goals For: <span id="goalsfor">{{teamstats.goalsfor}}</span>
+         / Expected Goals For: <span id="exgoalsfor">{{teamstats.exgoals}}</span></p>
+        <p id="goalsallowedtinfo"> Goals Allowed: <span id="goalsallowed">{{teamstats.goalsagainst}}</span>
+         / Expected Goals Allowed <span id="goalsallowed">{{teamstats.exgoalsagainst}}</span></p>
+         <p>Estimated Salaries</p>
+        <p id="salariesinfo">  Starters Weekly Salaries: <span id="teamstartersalary">{{startersalary}} €</span>
+         / Reserves Weekly Salary: <span id="teamreservesalary">{{reservesalary}} €</span> 
+         / Total: <span id="totalteamsalary">{{totalsalary}} €</span></p>
+        <p>Estimated League Salaries</p>
+        <span id="maxstartersalary" hidden>{{maxstartersalary}}</span>
+        <span id="maxreservesalary" hidden>{{maxreservesalary}}</span>
+        <span id="maxtotalsalary" hidden>{{maxtotalsalary}}</span>
+
+        <span id="percentile75startersalary" hidden>{{percentile75startersalary}}</span>
+        <span id="percentile75reservesalary" hidden>{{percentile75reservesalary}}</span>
+        <span id="percentile75totalsalary" hidden>{{percentile75totalsalary}}</span>
+
+        <span id="medianstartersalary" hidden>{{medianstartersalary}}</span>
+        <span id="medianreservesalary" hidden>{{medianreservesalary}}</span>
+        <span id="mediantotalsalary" hidden> {{mediantotalsalary}}</span>
+
+        <span id="percentile25startersalary" hidden>{{percentile25startersalary}}</span>
+        <span id="percentile25reservesalary" hidden>{{percentile25reservesalary}}</span>
+        <span id="percentile25totalsalary" hidden>{{percentile25totalsalary}}</span>
+
+        <span id="minstartersalary" hidden>{{minstartersalary}}</span>
+        <span id="minreservesalary" hidden>{{minreservesalary}}</span>
+        <span id="mintotalsalary" hidden>{{mintotalsalary}}</span>
+        <div id='salaryoverview'>
+        </div>
+    </div>
+    <div class="playerinfo">
         
     </div>
 {% endblock %}

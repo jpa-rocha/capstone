@@ -92,3 +92,9 @@ with open('contractinfo.json', 'r',encoding='utf-8') as file:
     fixedfile.close()
 
 
+# Cleaned goalkeeping stats CSV
+leaguegeneralstats = pd.read_csv('scout/csv data/league/LeagueGenStats.csv',usecols=[1,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
+leaguegeneralstats.to_csv('scout/csv data/cleaned/cleanleaguestats.csv', index=False)
+
+
+

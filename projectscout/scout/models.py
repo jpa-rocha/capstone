@@ -27,7 +27,50 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+class TeamStats(models.Model):
+    class Meta:
+        verbose_name_plural = "General Team Stats"
+
+    team = ForeignKey(Team, on_delete=CASCADE, primary_key=True, related_name='teamstats')
+    leagueranking = IntegerField()
+    matchesplayed = IntegerField()
+    matcheswon = IntegerField()
+    matchesdrawn = IntegerField()
+    matcheslost = IntegerField()
+    goalsfor = IntegerField()
+    goalsagainst = IntegerField()
+    goaldifference = IntegerField()
+    points = IntegerField()
+    pointspergame = FloatField()
+    exgoals = FloatField()
+    exgoalsagainst = FloatField()
+    exgoaldifference = FloatField()
+    exgoaldifferenceper90 = FloatField()
+    def serialize(self):
+        return {
+            'team' : self.team.name,
+            'leagueranking' : self.leagueranking,
+            'matchesplayed' : self.matchesplayed,
+            'matcheswon' : self.matcheswon,
+            'matchesdrawn' : self.matchesdrawn,
+            'matcheslost' : self.matcheslost,
+            'goalsfor' : self.goalsfor,
+            'goalsagainst' : self.goalsagainst,
+            'goaldifference' : self.goaldifference,
+            'points' : self.points,
+            'pointspergame' : self.pointspergame,
+            'exgoals' : self.exgoals,
+            'exgoalsagainst' : self.exgoalsagainst,
+            'exgoaldifference' : self.exgoaldifference,
+            'exgoaldifferenceper90' : self.exgoaldifferenceper90,
+        }
+    def __str__(self):
+        return self.team.name
+
 class Player(models.Model):
+    class Meta:
+        ordering = ["posord"]
+        
     name = CharField(max_length = 200)
     country = CharField(max_length=3)
     position = CharField(max_length=5)
@@ -596,11 +639,11 @@ class SalaryStats(models.Model):
         verbose_name_plural = "Salary Stats"
 
     player = ForeignKey(Player, on_delete=CASCADE, primary_key=True, related_name='salaries')
-    weeklysalary = DecimalField(max_digits=20, decimal_places=2)
-    yearlysalary = DecimalField(max_digits=20, decimal_places=2)
+    weeklysalary = FloatField()
+    yearlysalary = FloatField()
     status = CharField(max_length=20)
     contractlength = IntegerField()
-    estimatedtotal = DecimalField(max_digits=20, decimal_places=2)
+    estimatedtotal = FloatField()
 
     def serialize(self):
         return {

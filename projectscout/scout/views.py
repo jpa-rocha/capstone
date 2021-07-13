@@ -6,11 +6,13 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from .models import MiscStats, League, Player, PlayingTime, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats
-from .dataloader import salary_mgmt, team_mgmt, player_mgmt, time_mgmt, miscstats_mgmt, aerialstats_mgmt, shootingstats_mgmt, possessionstats_mgmt, passingstats_mgmt, passtypesstats_mgmt, defensivestats_mgmt, goalshotcreationstats_mgmt, goalkeepingstats_mgmt
+from .models import MiscStats, League, Player, PlayingTime, SalaryStats, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats, TeamStats
+from .dataloader import genteamstats_mgmt, salary_mgmt, team_mgmt, player_mgmt, time_mgmt, miscstats_mgmt, aerialstats_mgmt, shootingstats_mgmt, possessionstats_mgmt, passingstats_mgmt, passtypesstats_mgmt, defensivestats_mgmt, goalshotcreationstats_mgmt, goalkeepingstats_mgmt
 import pandas as pd
+import numpy as np
 import csv
 import json
+from itertools import chain
 
 
 # Create your views here.
@@ -32,18 +34,101 @@ def player(request, player_id):
     })
 
 def team(request, team_name):
-    print(team_name)
     team = Team.objects.get(name=team_name)
-    players = Player.objects.filter(team_id=team.id)
-    players = players.order_by('posord').all()
+    league = League.objects.get(name=team.league)
+    teamstats = TeamStats.objects.get(team = team)
+    players = Player.objects.filter(team = team)
+    salaryinfo = SalaryStats.objects.filter(player__in=players)
+    
+    # Salary information for selected team
+    startersalary = []
+    reservesalary = []
+    for player in salaryinfo:
+        if player.status == 'Starter':
+            startersalary.append(player.weeklysalary)
+        elif player.status == 'Reserve':
+             reservesalary.append(player.weeklysalary)
+
+    startersalary = round(sum(startersalary),2)
+    reservesalary = round(sum(reservesalary),2)
+
+    totalsalary = startersalary + reservesalary
+
+    # Salary information for the league
+    totalstartersalaries = []
+    totalreservesalaries = []
+    leagueteams = Team.objects.filter(league=league)
+    leagueplayers = Player.objects.filter(team__in = leagueteams)
+    leaguesalaries = SalaryStats.objects.filter(player__in=leagueplayers)
+    for team in leagueteams:
+        teamstartersalary = []
+        teamreservesalary = []
+        teamplayers = leagueplayers.filter(team = team)
+        teamsalaries = leaguesalaries.filter(player__in=teamplayers)
+        for player in teamsalaries:
+            if player.status == 'Starter':
+                teamstartersalary.append(player.weeklysalary)
+            elif player.status == 'Reserve':
+                teamreservesalary.append(player.weeklysalary)
+        teamstartersalary = sum(teamstartersalary)
+        teamreservesalary = sum(teamreservesalary)
+
+        totalstartersalaries.append(teamstartersalary)
+        totalreservesalaries.append(teamreservesalary)
+
+    
+    # Starting salaries
+    maxstartersalary = round(max(totalstartersalaries),2)
+    minstartersalary = round(min(totalstartersalaries),2)
+    medianstartersalary = round(np.percentile(totalstartersalaries,50),2)
+    percentile25startersalary = round(np.percentile(totalstartersalaries,25),2)
+    percentile75startersalary = round(np.percentile(totalstartersalaries,75),2)
+
+    # Reserve salaries
+    maxreservesalary = round(max(totalreservesalaries),2)
+    minreservesalary = round(min(totalreservesalaries),2)
+    medianreservesalary = round(np.percentile(totalreservesalaries,50),2)
+    percentile25reservesalary = round(np.percentile(totalreservesalaries,25),2)
+    percentile75reservesalary = round(np.percentile(totalreservesalaries,75),2)
+
+    # Total salaries
+    maxtotalsalary = maxstartersalary + maxreservesalary
+    mintotalsalary = minstartersalary + minreservesalary
+    mediantotalsalary = medianstartersalary + medianreservesalary
+    percentile25totalsalary = percentile25startersalary + percentile25reservesalary
+    percentile75totalsalary = percentile75startersalary + percentile25reservesalary
+
+
+    
     return render(request, "scout/team.html", {
-        'players' : players
+        'team' : team_name,
+        'teamstats' : teamstats,
+        'startersalary' : startersalary,
+        'reservesalary' : reservesalary,
+        'totalsalary' : totalsalary,
+        'maxstartersalary' : maxstartersalary,
+        'maxreservesalary' : maxreservesalary,
+        'maxtotalsalary' : maxtotalsalary,
+        'medianstartersalary' : medianstartersalary,
+        'medianreservesalary' : medianreservesalary,
+        'mediantotalsalary' : mediantotalsalary,
+        'minstartersalary' : minstartersalary,
+        'minreservesalary' : minreservesalary,
+        'mintotalsalary' : mintotalsalary,
+        'percentile25totalsalary' : percentile25totalsalary,
+        'percentile25startersalary' : percentile25startersalary,
+        'percentile25reservesalary' : percentile25reservesalary,
+        'percentile75reservesalary' : percentile75reservesalary,
+        'percentile75startersalary' : percentile75startersalary,
+        'percentile75totalsalary' : percentile75totalsalary,
+
+
     })
 
 def league(request, league_name):
     league = League.objects.get(name=league_name)
     teams = Team.objects.filter(league=league.id)
-    return render(request, "scout/team.html", {
+    return render(request, "scout/league.html", {
         'teams' : teams
     })
 
@@ -270,7 +355,25 @@ def upload_files(request):
             except:
                 return render(request, 'scout/upload.html', {
                         'errorsalary' : 'You tried to upload the wrong file.'
-                    })                                                                                     
+                    }) 
+        
+        # Directs GENERAL TEAM STATS updates to the appropriate manager
+        elif request.POST.get('genteamstats'):
+            try:
+                if request.FILES['genteamstats'].name == 'cleanleaguestats.csv':
+                    
+                    if genteamstats_mgmt(request) == 'Y':
+                        return HttpResponse(status=204)
+                    else: 
+                        return HttpResponse(status=500)
+                else:
+                    return render(request, 'scout/upload.html', {
+                        'errorgenteamstats' : 'You tried to upload the wrong file.'
+                    })
+            except:
+                return render(request, 'scout/upload.html', {
+                        'errorgenteamstats' : 'You tried to upload the wrong file.'
+                    })                                                                                                                                     
     else:
         return render(request, 'scout/upload.html')
 
@@ -324,3 +427,35 @@ def register(request):
         return HttpResponseRedirect(reverse('index'))
     else:
         return render(request, 'scout/register.html')
+
+# APIs
+# teams
+def teamapi(request, team_name):
+    team = Team.objects.get(name=team_name)
+    players = Player.objects.filter(team_id=team.id)
+    misc = MiscStats.objects.filter(player__in = players)
+    aerial = AerialDuels.objects.filter(player__in = players)
+    shooting = ShootingStats.objects.filter(player__in = players)
+    possession = PossessionStats.objects.filter(player__in = players)
+    passing = PassingStats.objects.filter(player__in = players)
+    passtypes = PassTypesStats.objects.filter(player__in = players)
+    defensive = DefensiveStats.objects.filter(player__in = players)
+    gsc = GoalShotCreationStats.objects.filter(player__in = players)
+    goalkeeping = GoalkeepingStats.objects.filter(player__in = players)
+    salaries = SalaryStats.objects.filter(player__in = players)
+    teamreport = chain(players, misc, aerial, shooting, possession, passing, passtypes, defensive, gsc, goalkeeping, salaries)
+
+    return JsonResponse([player.serialize() for player in teamreport], safe=False)
+
+
+#players = Player.objects.prefetch_related('playingtime',
+#                                              'misc',
+ #                                             'aerial',
+  #                                            'shooting',
+   #                                           'possession',
+    #                                          'passing',
+     #                                         'passtypes',
+      #                                        'defensive',
+       #                                       'gsc',
+        #                                      'goalkeeping',
+         #                                     'salaries').filter(team_id=team.id)

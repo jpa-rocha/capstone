@@ -1,4 +1,4 @@
-from .models import MiscStats, League, Player, PlayingTime, SalaryStats, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats
+from .models import MiscStats, League, Player, PlayingTime, SalaryStats, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats, TeamStats
 import csv
 import json
 
@@ -452,7 +452,6 @@ def salary_mgmt(request):
                     if player.name == contracts[str(i)]['name']:
                         print('yes')
                         statcheck = SalaryStats.objects.filter(player = player)
-                        print(statcheck)
                         if statcheck.exists():
                             pass
                         else:
@@ -462,6 +461,43 @@ def salary_mgmt(request):
                             newstat.save()
             result = 'Y'
             return result
+        except:
+            result = 'N'
+            return result
+
+def genteamstats_mgmt(request):
+    if request.method == 'POST':
+        try:
+            genteamstatsfile = request.FILES['genteamstats'].read().decode('UTF-8').splitlines()
+            # Ready CSV
+            
+            genteamstats = csv.reader(genteamstatsfile)
+            genteamstatslist = []
+            for entry in genteamstats:
+                genteamstatslist.append(entry)
+            genteamstatslist = genteamstatslist[1:]
+            # List wasn't looping properly into DB, had to make diferent list based on original range for each iteration
+            rangestats = range(len(genteamstatslist))
+            for i in rangestats:
+                genteamstatslist = genteamstatslist[i:]
+                for entry in genteamstatslist:
+                    team = Team.objects.get(name = entry[0])
+                    statcheck = TeamStats.objects.filter(team = team.id)
+                    if statcheck.exists():
+                        pass
+                    else:
+                        newstat = TeamStats.objects.create(team=team, leagueranking = entry[1], matchesplayed = entry[2],
+                                                          matcheswon = entry[3], matchesdrawn = entry[4],
+                                                          matcheslost = entry[5], goalsfor = entry[6], 
+                                                          goalsagainst = entry[7], goaldifference = entry[8],
+                                                          points = entry[9], pointspergame = entry[10], exgoals = entry[11],
+                                                          exgoalsagainst = entry[12], exgoaldifference = entry[13], exgoaldifferenceper90 = entry[14],
+                                                         )
+                        newstat.save()
+                        pass
+            result = 'Y'
+            return result
+
         except:
             result = 'N'
             return result

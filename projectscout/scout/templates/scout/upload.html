@@ -251,6 +251,25 @@
                 {% endif %}
             </div>
         </div>
+        <div class="col">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <span class='uploadtitel'>General Team Statistics</span>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="genteamstats">
+                        <input type="submit" name="genteamstats" value="Upload" class="uploadbtn">
+                    </form>
+                </div>
+                {% if errorgenteamstats %}
+                <div class="card-footer">
+                    <span class='uploadfooter'>{{errorgenteamstats}}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>  
 </div>
 {% endif %}
