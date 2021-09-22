@@ -1,73 +1,130 @@
 document.addEventListener('DOMContentLoaded', function() {
     const teamname = window.location.pathname.split('/')[2];
-    get_team(teamname)
-    salaryoverview()
+    get_team(teamname);
+    salaryoverview(teamname);
 })
 
 
-function salaryoverview(){
-
-    var teamname = document.getElementById('teamname').innerText;
+function salaryoverview(name){
     
-    var dictreservesalary = document.getElementById('dictreservesalary').innerText;
-    var dictstartersalary = document.getElementById('dictstartersalary').innerText;
-    var dicttotalsalary = document.getElementById('dicttotalsalary').innerText;
+    fetch(`/salaryoverviewapi/${name}`)
+    .then(response => response.json()) 
+    .then(salaries =>{
+        var reserves = salaries['reserves'];
+        var keysreserves = [];
+        var valuesreserves = [];
+        reserves.forEach(reserve =>{
+            keysreserves.push(reserve[0])
+            valuesreserves.push(reserve[1])
+        });
 
-    var reservesalary = JSON.parse(dictreservesalary);
-    var startersalary = JSON.parse(dictstartersalary);
-    var totalsalary = JSON.parse(dicttotalsalary);
+        var starters = salaries['starters'];
+        var keysstarters = [];
+        var valuesstarters = [];
+        starters.forEach(starter =>{
+            keysstarters.push(starter[0])
+            valuesstarters.push(starter[1])
+        });
+
+        var total = salaries['total'];
+        var keystotal = [];
+        var valuestotal = [];
+        total.forEach(total =>{
+            keystotal.push(total[0])
+            valuestotal.push(total[1])
+        });
+
+        var trace1 = {
+            x : keysreserves,
+            y : valuesreserves,
+            type : 'bar',
+            name : 'Reserves Salaries'
+        };
+    
+        var trace2 = {
+            x : keysstarters,
+            y : valuesstarters,
+            type : 'bar',
+            name : 'Starters Salaries'
+        };
+    
+        var trace3 = {
+            x : keystotal,
+            y : valuestotal,
+            type : 'bar',
+            name : 'Total Salaries'
+        };
+    
+        var data = [trace1, trace2, trace3];
+        var layout = {barmode: 'group'};
+    
+        Plotly.newPlot('salaryoverview', data, layout,{scrollZoom: true, 
+                                                       displayModeBar: false,
+                                                       responsive: true,
+                                                       showlegend: true,
+                                                       });
+    })
     
 
-    var keysreserves = [];
-    var valuesreserves = [];
-    for (key in reservesalary){
-        keysreserves.push(reservesalary[key][0])
-        valuesreserves.push(reservesalary[key][1])
-    }
-    var keysstarters = [];
-    var valuesstarters = [];
-    for (key in startersalary){
-        keysstarters.push(startersalary[key][0])
-        valuesstarters.push(startersalary[key][1])
-    }
-    var keystotal = [];
-    var valuestotal = [];
-    for (key in totalsalary){
-        keystotal.push(totalsalary[key][0])
-        valuestotal.push(totalsalary[key][1])
-    }
+    fetch (`/teamsalaryapi/${name}`)
+    .then(response => response.json()) 
+    .then(salaries =>{
+        startersalarysheet = []
+        reservesalarysheet = []
+        salaries.forEach(player=>{
+            if (player['status'] === 'Starter'){
+                entry = []
+                entry.push(player['player'])
+                entry.push(player['weeklysalary'])
+                startersalarysheet.push(entry)   
+            }
+            else {
+                entry = []
+                entry.push(player['player'])
+                entry.push(player['weeklysalary'])
+                reservesalarysheet.push(entry)   
+            }
+        })
+        console.log(startersalarysheet)
+        console.log(reservesalarysheet)
+        skeys = [];
+        svalues = [];
+        startersalarysheet.forEach(entry=>{
+            skeys.push(entry[0]);
+            svalues.push(entry[1]);
+        });
+            
+    
+        rkeys = [];
+        rvalues = [];
+        
+        reservesalarysheet.forEach(entry=>{
+            rkeys.push(entry[0]);
+            rvalues.push(entry[1]);
+        });
+        
+        var traceb = {
+            x : skeys,
+            y : svalues,
+            type : 'bar',
+            name : 'Starters Salaries'
+        };
 
-    console.log(valuestotal)
-    var trace3 = {
-        x : keysreserves,
-        y : valuesreserves,
-        type : 'bar',
-        name : 'Reserves Salaries'
-    };
-
-    var trace2 = {
-        x : keysstarters,
-        y : valuesstarters,
-        type : 'bar',
-        name : 'Starters Salaries'
-    };
-
-    var trace1 = {
-        x : keystotal,
-        y : valuestotal,
-        type : 'bar',
-        name : 'Total Salaries'
-    };
-
-    var data = [trace1, trace2, trace3];
-    var layout = {barmode: 'group'};
-
-    Plotly.newPlot('salaryoverview', data, layout,{scrollZoom: true, 
-                                                   displayModeBar: false,
-                                                   responsive: true,
-                                                   showlegend: true,
-                                                   });
-}
+        var tracea = {
+            x : rkeys,
+            y : rvalues,
+            type : 'bar',
+            name : 'Reserves Salaries'
+        };
+        var data = [tracea, traceb];
+        var layout = {barmode: 'group'};
+        Plotly.newPlot('playersalaries', data, layout,{scrollZoom: true, 
+                                                    displayModeBar: false,
+                                                    responsive: true,
+                                                    showlegend: true,
+                                                    });
+    });      
+};
 
 
 function get_team(name){

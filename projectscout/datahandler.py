@@ -71,8 +71,8 @@ with open('contractinfo.json', 'r',encoding='utf-8') as file:
     contracts = json.load(file)
     for i in contracts:
         contracts[str(i)]['weeklysalary'] = contracts[str(i)]['weeklysalary'].replace(',','')
-        contracts[str(i)]['yearlysalary'] = contracts[str(i)]['weeklysalary'].replace(',','')
-        contracts[str(i)]['estimatedtotal'] = contracts[str(i)]['weeklysalary'].replace(',','')
+        contracts[str(i)]['yearlysalary'] = contracts[str(i)]['yearlysalary'].replace(',','')
+        contracts[str(i)]['estimatedtotal'] = contracts[str(i)]['estimatedtotal'].replace(',','')
         if contracts[str(i)]['weeklysalary'][0] == '£':
             contracts[str(i)]['weeklysalary'] = float(contracts[str(i)]['weeklysalary'][1:]) * 1.6
         elif contracts[str(i)]['weeklysalary'][0] == '€':

@@ -1,3 +1,29 @@
+body {
+    background-color:white;
+    color: black;
+    
+}
+
+.header {
+    background-color:#28a745;
+}
+
+.mainlinks {
+    color: white;
+    padding-right: 1.5rem;
+}
+
+.mainlinks:hover {
+    text-decoration: none;
+    color: white;
+    font-size: 1.1rem;
+
+}
+
+.right {
+    float: right;
+}
+
 .uploadtitel {
     font-weight: bold;
 }
@@ -8,4 +34,20 @@
 
 .teamnames:hover{
     cursor: pointer;
+}
+
+#teamname {
+    font-weight: bold;
+    font-size: 2rem;
+}
+.subtitle {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+.stats {
+    font-size: 1.25rem;
+}
+.styling {
+    font-weight: bold;
+    font-size: 1.25rem;
 }

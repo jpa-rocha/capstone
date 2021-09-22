@@ -6,5 +6,9 @@
 {% endblock %}
 
 {% block body %}
-    <P>TEST</p>
+    {% for team in teams %}    
+        <a href="{% url 'team' team.name %}"><span id="{{team.name}}" class="badge badge-pill badge-success teamnames">{{team.name}}</span></a>
+    {% endfor %}
+    <div id="salaryoverview"></div>
+    <div id="salarygoals"></div>
 {% endblock %}

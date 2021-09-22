@@ -444,13 +444,13 @@ def goalkeepingstats_mgmt(request):
 def salary_mgmt(request):
     if request.method == 'POST':
         try:
+            SalaryStats.objects.all().delete()
             players = Player.objects.all()
             salaryfile = request.FILES['salary']
             contracts = json.load(salaryfile)
             for player in players:
                 for i in contracts:
                     if player.name == contracts[str(i)]['name']:
-                        print('yes')
                         statcheck = SalaryStats.objects.filter(player = player)
                         if statcheck.exists():
                             pass

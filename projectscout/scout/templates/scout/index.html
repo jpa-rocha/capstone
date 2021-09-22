@@ -6,16 +6,7 @@
 {% endblock %}
 
 {% block body %}
-
-<div class="selectors">
-    {% for league in leagues %}
-        <button id="{{league.name}}" class="btn btn-success btn-lg leaguenames">{{league.name}}</button>
-        {% for team in teams %}
-            {% if team.league.name == league.name %}
-            <span id="{{team.name}}" class="badge badge-pill badge-success teamnames">{{team.name}}</span>
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
-</div> 
+    <div id="salaryoverview"></div>
+    <div id="salarygoals"></div>
 {% endblock %}
 

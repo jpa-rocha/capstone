@@ -1,4 +1,4 @@
-from django.contrib import auth
+from collections import OrderedDict
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -8,9 +8,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from .models import MiscStats, League, Player, PlayingTime, SalaryStats, ShootingStats, Team, AerialDuels, PossessionStats, PassingStats, PassTypesStats, DefensiveStats, GoalShotCreationStats, GoalkeepingStats, TeamStats
 from .dataloader import genteamstats_mgmt, salary_mgmt, team_mgmt, player_mgmt, time_mgmt, miscstats_mgmt, aerialstats_mgmt, shootingstats_mgmt, possessionstats_mgmt, passingstats_mgmt, passtypesstats_mgmt, defensivestats_mgmt, goalshotcreationstats_mgmt, goalkeepingstats_mgmt
-import pandas as pd
 import numpy as np
-import csv
+import pandas as pd
 import json
 from itertools import chain
 
@@ -20,6 +19,7 @@ def index(request):
     teams = Team.objects.all()
     teams = teams.order_by('league').all()
     leagues = League.objects.all()
+
     return render(request, "scout/index.html",{
         'teams' : teams,
         'leagues' : leagues
@@ -35,101 +35,41 @@ def player(request, player_id):
 
 def team(request, team_name):
     team = Team.objects.get(name=team_name)
-    league = League.objects.get(name=team.league)
     teamstats = TeamStats.objects.get(team = team)
     players = Player.objects.filter(team = team)
     salaryinfo = SalaryStats.objects.filter(player__in=players)
-    
+    leagues = League.objects.all()
+
     # Salary information for selected team
-    startersalary = []
-    reservesalary = []
+    startersalary =[]
+    reservesalary =[]
     for player in salaryinfo:
         if player.status == 'Starter':
-            startersalary.append(player.weeklysalary)
+            startersalary.append(player.weeklysalary)           
         elif player.status == 'Reserve':
-             reservesalary.append(player.weeklysalary)
-
+            reservesalary.append(player.weeklysalary)
+   
     startersalary = round(sum(startersalary),2)
     reservesalary = round(sum(reservesalary),2)
-
     totalsalary = startersalary + reservesalary
 
-    # Salary information for the league
-    totalstartersalaries = []
-    totalreservesalaries = []
-    leagueteams = Team.objects.filter(league=league)
-    leagueplayers = Player.objects.filter(team__in = leagueteams)
-    leaguesalaries = SalaryStats.objects.filter(player__in=leagueplayers)
-    for team in leagueteams:
-        teamstartersalary = []
-        teamreservesalary = []
-        teamplayers = leagueplayers.filter(team = team)
-        teamsalaries = leaguesalaries.filter(player__in=teamplayers)
-        for player in teamsalaries:
-            if player.status == 'Starter':
-                teamstartersalary.append(player.weeklysalary)
-            elif player.status == 'Reserve':
-                teamreservesalary.append(player.weeklysalary)
-        teamstartersalary = sum(teamstartersalary)
-        teamreservesalary = sum(teamreservesalary)
-
-        totalstartersalaries.append(teamstartersalary)
-        totalreservesalaries.append(teamreservesalary)
-
-    
-    # Starting salaries
-    maxstartersalary = round(max(totalstartersalaries),2)
-    minstartersalary = round(min(totalstartersalaries),2)
-    medianstartersalary = round(np.percentile(totalstartersalaries,50),2)
-    percentile25startersalary = round(np.percentile(totalstartersalaries,25),2)
-    percentile75startersalary = round(np.percentile(totalstartersalaries,75),2)
-
-    # Reserve salaries
-    maxreservesalary = round(max(totalreservesalaries),2)
-    minreservesalary = round(min(totalreservesalaries),2)
-    medianreservesalary = round(np.percentile(totalreservesalaries,50),2)
-    percentile25reservesalary = round(np.percentile(totalreservesalaries,25),2)
-    percentile75reservesalary = round(np.percentile(totalreservesalaries,75),2)
-
-    # Total salaries
-    maxtotalsalary = maxstartersalary + maxreservesalary
-    mintotalsalary = minstartersalary + minreservesalary
-    mediantotalsalary = medianstartersalary + medianreservesalary
-    percentile25totalsalary = percentile25startersalary + percentile25reservesalary
-    percentile75totalsalary = percentile75startersalary + percentile25reservesalary
-
-
-    
     return render(request, "scout/team.html", {
         'team' : team_name,
         'teamstats' : teamstats,
         'startersalary' : startersalary,
         'reservesalary' : reservesalary,
         'totalsalary' : totalsalary,
-        'maxstartersalary' : maxstartersalary,
-        'maxreservesalary' : maxreservesalary,
-        'maxtotalsalary' : maxtotalsalary,
-        'medianstartersalary' : medianstartersalary,
-        'medianreservesalary' : medianreservesalary,
-        'mediantotalsalary' : mediantotalsalary,
-        'minstartersalary' : minstartersalary,
-        'minreservesalary' : minreservesalary,
-        'mintotalsalary' : mintotalsalary,
-        'percentile25totalsalary' : percentile25totalsalary,
-        'percentile25startersalary' : percentile25startersalary,
-        'percentile25reservesalary' : percentile25reservesalary,
-        'percentile75reservesalary' : percentile75reservesalary,
-        'percentile75startersalary' : percentile75startersalary,
-        'percentile75totalsalary' : percentile75totalsalary,
-
-
+        'leagues' : leagues
     })
 
 def league(request, league_name):
     league = League.objects.get(name=league_name)
     teams = Team.objects.filter(league=league.id)
+    teams = teams.order_by('name').all()
+    leagues = League.objects.all()
     return render(request, "scout/league.html", {
-        'teams' : teams
+        'teams' : teams,
+        'leagues' : leagues
     })
 
 
@@ -447,15 +387,180 @@ def teamapi(request, team_name):
 
     return JsonResponse([player.serialize() for player in teamreport], safe=False)
 
+def salaryoverviewapi(request, lORt_name):
+        dicttotalstartersalaries = {}
+        dicttotalreservesalaries = {}
+        dicttotalsalaries = {}
+        userteam = Team.objects.get(name = lORt_name)
+        league = userteam.league
+        leagueteams = Team.objects.filter(league=league)
+        leagueplayers = Player.objects.filter(team__in = leagueteams)
+        leaguesalaries = SalaryStats.objects.filter(player__in=leagueplayers)
+        for team in leagueteams:
+            teamstartersalary = []
+            teamreservesalary = []
+            teamplayers = leagueplayers.filter(team = team)
+            teamsalaries = leaguesalaries.filter(player__in=teamplayers)
+            for player in teamsalaries:
+                if player.status == 'Starter':
+                    teamstartersalary.append(player.weeklysalary)
+                elif player.status == 'Reserve':
+                    teamreservesalary.append(player.weeklysalary)
 
-#players = Player.objects.prefetch_related('playingtime',
-#                                              'misc',
- #                                             'aerial',
-  #                                            'shooting',
-   #                                           'possession',
-    #                                          'passing',
-     #                                         'passtypes',
-      #                                        'defensive',
-       #                                       'gsc',
-        #                                      'goalkeeping',
-         #                                     'salaries').filter(team_id=team.id)
+            dicttotalstartersalaries[team.name] = sum(teamstartersalary)
+            dicttotalreservesalaries[team.name] = sum(teamreservesalary)
+            dicttotalsalaries[team.name] = round(sum(teamstartersalary)) + round(sum(teamreservesalary))
+
+        orderedstartersalaries = sorted(dicttotalstartersalaries.items(), key=lambda x: x[1])
+        startersalarieslist = []
+        for entry in orderedstartersalaries:
+            startersalarieslist.append(entry[1])
+
+        orderedreservesalaries = sorted(dicttotalreservesalaries.items(), key=lambda x: x[1])
+        reservesalarieslist = []
+        for entry in orderedreservesalaries:
+            reservesalarieslist.append(entry[1])
+
+        orderedtotalsalaries = sorted(dicttotalsalaries.items(), key=lambda x: x[1])
+        totalsalarieslist = []
+        for entry in orderedtotalsalaries:
+            totalsalarieslist.append(entry[1])
+        
+        startersalaryoverview = {}
+        startersalaryoverview['Lowest'] = float(round(np.min(startersalarieslist),2))
+        startersalaryoverview['25th Percentile'] = float(round(np.percentile(startersalarieslist, 25)))
+        startersalaryoverview['Median'] = float(round(np.percentile(startersalarieslist, 50)))
+        startersalaryoverview['75th Percentile'] = float(round(np.percentile(startersalarieslist, 75)))
+        startersalaryoverview['Highest'] = float(round(np.max(startersalarieslist),2))
+        startersalaryoverview[f'{lORt_name}'] = float(round(dicttotalstartersalaries[f'{lORt_name}'],2))
+        startersalaryoverview = sorted(startersalaryoverview.items(), key=lambda x: x[1])
+
+        reservesalaryoverview = {}
+        reservesalaryoverview['Lowest'] = float(round(np.min(reservesalarieslist),2))
+        reservesalaryoverview['25th Percentile'] = float(round(np.percentile(reservesalarieslist, 25)))
+        reservesalaryoverview['Median'] = float(round(np.percentile(reservesalarieslist, 50)))
+        reservesalaryoverview['75th Percentile'] = float(round(np.percentile(reservesalarieslist, 75)))
+        reservesalaryoverview['Highest'] = float(round(np.max(reservesalarieslist),2))
+        reservesalaryoverview[f'{lORt_name}'] = float(round(dicttotalreservesalaries[f'{lORt_name}'],2))
+        reservesalaryoverview = sorted(reservesalaryoverview.items(), key=lambda x: x[1])
+
+        totalsalaryoverview = {}
+        totalsalaryoverview['Lowest'] = float(round(np.min(totalsalarieslist),2))
+        totalsalaryoverview['25th Percentile'] = float(round(np.percentile(totalsalarieslist, 25)))
+        totalsalaryoverview['Median'] = float(round(np.percentile(totalsalarieslist, 50)))
+        totalsalaryoverview['75th Percentile'] = float(round(np.percentile(totalsalarieslist, 75)))
+        totalsalaryoverview['Highest'] = float(round(np.max(totalsalarieslist),2))
+        totalsalaryoverview[f'{lORt_name}'] = float(round(dicttotalsalaries[f'{lORt_name}'],2))
+        totalsalaryoverview = sorted(totalsalaryoverview.items(), key=lambda x: x[1])
+
+        teamsalaryoverview = {}
+        teamsalaryoverview['starters'] = startersalaryoverview
+        teamsalaryoverview['reserves'] = reservesalaryoverview
+        teamsalaryoverview['total'] = totalsalaryoverview
+       
+        return JsonResponse(teamsalaryoverview, safe=False)
+        
+    
+
+def teamsalaryapi(request, team_name):
+    team = Team.objects.get(name=team_name)
+    players = Player.objects.filter(team_id=team.id)
+    salaries = SalaryStats.objects.filter(player__in = players)
+
+    return JsonResponse([player.serialize() for player in salaries], safe=False)
+
+def leaguesalaryapi(request, league_name):
+    league = League.objects.get(name=league_name)
+    # Salary information for the league
+    dicttotalstartersalaries = {}
+    dicttotalreservesalaries = {}
+    dicttotalsalaries = {}
+    leagueteams = Team.objects.filter(league=league)
+    leagueplayers = Player.objects.filter(team__in = leagueteams)
+    leaguesalaries = SalaryStats.objects.filter(player__in=leagueplayers)
+    for team in leagueteams:
+        teamstartersalary = []
+        teamreservesalary = []
+        teamplayers = leagueplayers.filter(team = team)
+        teamsalaries = leaguesalaries.filter(player__in=teamplayers)
+        for player in teamsalaries:
+            if player.status == 'Starter':
+                teamstartersalary.append(player.weeklysalary)
+            elif player.status == 'Reserve':
+                teamreservesalary.append(player.weeklysalary)
+
+        dicttotalstartersalaries[team.name] = sum(teamstartersalary)
+        dicttotalstartersalaries = OrderedDict(sorted(dicttotalstartersalaries.items()))
+        dicttotalreservesalaries[team.name] = sum(teamreservesalary)
+        dicttotalreservesalaries = OrderedDict(sorted(dicttotalreservesalaries.items()))
+        dicttotalsalaries[team.name] = round(sum(teamstartersalary)) + round(sum(teamreservesalary))
+        dicttotalsalaries = OrderedDict(sorted(dicttotalsalaries.items()))
+    
+    leaguesalaries = []
+    leaguesalaries.append(dicttotalstartersalaries)
+    leaguesalaries.append(dicttotalreservesalaries)
+    leaguesalaries.append(dicttotalsalaries)
+    return  JsonResponse(leaguesalaries, safe=False)
+
+def totalsalaryapi(request):
+    league = League.objects.all()
+    # Salary information for the league
+    dicttotalstartersalaries = {}
+    dicttotalreservesalaries = {}
+    dicttotalsalaries = {}
+    for league in league:
+        leagueteams = Team.objects.filter(league=league)
+        leagueplayers = Player.objects.filter(team__in = leagueteams)
+        leaguesalaries = SalaryStats.objects.filter(player__in=leagueplayers)
+        teamstartersalary = []
+        teamreservesalary = []
+        for team in leagueteams:
+            teamplayers = leagueplayers.filter(team = team)
+            teamsalaries = leaguesalaries.filter(player__in=teamplayers)
+            for player in teamsalaries:
+                if player.status == 'Starter':
+                    teamstartersalary.append(player.weeklysalary)
+                elif player.status == 'Reserve':
+                    teamreservesalary.append(player.weeklysalary)
+
+        dicttotalstartersalaries[league.name] = round(sum(teamstartersalary))
+        dicttotalreservesalaries[league.name] = round(sum(teamreservesalary))
+        dicttotalsalaries[league.name] = round(sum(teamstartersalary)) + round(sum(teamreservesalary))
+        
+        leaguesalaries = []
+        leaguesalaries.append(dicttotalstartersalaries)
+        leaguesalaries.append(dicttotalreservesalaries)
+        leaguesalaries.append(dicttotalsalaries)
+    return  JsonResponse(leaguesalaries, safe=False)
+
+
+def salarygoalsapi(request, div):
+    if div == "ALL":
+        players = Player.objects.all()
+        playersdf = pd.DataFrame(Player.objects.all().values())
+        goals = pd.DataFrame(ShootingStats.objects.filter(player__in = players).order_by('-goals').values())
+        salaries = pd.DataFrame(list(SalaryStats.objects.filter(player__in = players).values()))
+        report = pd.merge(goals, salaries, on='player_id')
+        report = report.rename(columns={'player_id': 'id'})
+        finalreport = pd.merge(playersdf, report, on='id')
+        finalreport = finalreport.sort_values(by=['goals'], ascending=False)
+        finalreport = finalreport.set_index('id')
+        finalreport = finalreport.head(100)
+        finalreport = json.loads(json.dumps(list(finalreport.T.to_dict().values())))
+        return JsonResponse(finalreport, safe=False)
+    else:
+        league = League.objects.get(name=div)
+        if league:
+            leagueteams = Team.objects.filter(league=league)
+            players = Player.objects.filter(team__in = leagueteams)
+            playersdf = pd.DataFrame(Player.objects.filter(team__in = leagueteams).values())
+            goals = pd.DataFrame(ShootingStats.objects.filter(player__in = players).order_by('-goals').values())
+            salaries = pd.DataFrame(list(SalaryStats.objects.filter(player__in = players).values()))
+            report = pd.merge(goals, salaries, on='player_id')
+            report = report.rename(columns={'player_id': 'id'})
+            finalreport = pd.merge(playersdf, report, on='id')
+            finalreport = finalreport.sort_values(by=['goals'], ascending=False)
+            finalreport = finalreport.set_index('id')
+            finalreport = finalreport.head(100)
+            finalreport = json.loads(json.dumps(list(finalreport.T.to_dict().values())))
+            return JsonResponse(finalreport, safe=False)
