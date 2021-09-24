@@ -370,6 +370,7 @@ def register(request):
 
 # APIs
 # teams
+# Calls db and collects some player information
 def teamapi(request, team_name):
     team = Team.objects.get(name=team_name)
     players = Player.objects.filter(team_id=team.id)
@@ -387,6 +388,7 @@ def teamapi(request, team_name):
 
     return JsonResponse([player.serialize() for player in teamreport], safe=False)
 
+#Calls db and collects player salary information, does the math to identify certain percentiles and the average
 def salaryoverviewapi(request, lORt_name):
         dicttotalstartersalaries = {}
         dicttotalreservesalaries = {}
@@ -461,7 +463,7 @@ def salaryoverviewapi(request, lORt_name):
         return JsonResponse(teamsalaryoverview, safe=False)
         
     
-
+# Salary information for a single team
 def teamsalaryapi(request, team_name):
     team = Team.objects.get(name=team_name)
     players = Player.objects.filter(team_id=team.id)
@@ -469,6 +471,7 @@ def teamsalaryapi(request, team_name):
 
     return JsonResponse([player.serialize() for player in salaries], safe=False)
 
+# Salary information for the league
 def leaguesalaryapi(request, league_name):
     league = League.objects.get(name=league_name)
     # Salary information for the league
@@ -502,6 +505,7 @@ def leaguesalaryapi(request, league_name):
     leaguesalaries.append(dicttotalsalaries)
     return  JsonResponse(leaguesalaries, safe=False)
 
+
 def totalsalaryapi(request):
     league = League.objects.all()
     # Salary information for the league
@@ -533,7 +537,7 @@ def totalsalaryapi(request):
         leaguesalaries.append(dicttotalsalaries)
     return  JsonResponse(leaguesalaries, safe=False)
 
-
+# Salary and goal inforamtion for all leagues or a single league
 def salarygoalsapi(request, div):
     if div == "ALL":
         players = Player.objects.all()
@@ -565,6 +569,7 @@ def salarygoalsapi(request, div):
             finalreport = json.loads(json.dumps(list(finalreport.T.to_dict().values())))
             return JsonResponse(finalreport, safe=False)
 
+# Salary and assists inforamtion for all leagues or a single league
 def salaryassistsapi(request, div):
     if div == "ALL":
         players = Player.objects.all()
@@ -596,6 +601,7 @@ def salaryassistsapi(request, div):
             finalreport = json.loads(json.dumps(list(finalreport.T.to_dict().values())))
             return JsonResponse(finalreport, safe=False)
 
+# Salary and tackles inforamtion for all leagues or a single league
 def salarytacklesapi(request, div):
     if div == "ALL":
         players = Player.objects.all()

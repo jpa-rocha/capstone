@@ -131,8 +131,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 projectscout/file.json
-projectscout/contractrequest.py
-projectscout/chromedriver.exe
 projectscout/full.txt
 projectscout/teamfix.txt
 projectscout/teams.txt
