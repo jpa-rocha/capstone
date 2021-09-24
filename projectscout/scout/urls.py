@@ -22,4 +22,6 @@ urlpatterns = [
     path('totalsalaryapi', views.totalsalaryapi, name='totalsalaryapi'),
     path('leaguesalaryapi/<str:league_name>', views.leaguesalaryapi, name='leaguesalaryapi'),
     path('salarygoalsapi/<str:div>', views.salarygoalsapi, name='salarygoalsapi'),
+    path('salaryassistsapi/<str:div>', views.salaryassistsapi, name='salaryassistsapi'),
+    path('salarytacklesapi/<str:div>', views.salarytacklesapi, name='salarytacklesapi')
 ]

@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const leaguename = window.location.pathname.split('/')[2];
     salaryoverview(leaguename);
     salarygoals(leaguename);
+    salaryassists(leaguename);
+    salarytackles(leaguename)
 })
 
 function salaryoverview(name){
@@ -57,10 +59,16 @@ function salaryoverview(name){
         };
     
         var data = [trace1, trace2, trace3];
-        var layout = {barmode: 'group'};
+        var layout = {barmode: 'group',
+                      height : 600,
+                      title:`Salary Distribution` ,
+                      font: {
+                            family: 'Courier New, monospace',
+                            size: 15
+                            },
+                    };
     
-        Plotly.newPlot('salaryoverview', data, layout,{scrollZoom: true, 
-                                                       displayModeBar: false,
+        Plotly.newPlot('salaryoverview', data, layout,{displayModeBar: false,
                                                        responsive: true,
                                                        showlegend: true,
                                                        });
@@ -87,7 +95,7 @@ function salaryoverview(name){
                     name : entry['name'],
                     text : [entry['position'], exgoals],
                     marker: { color: 'green',
-                              size: 15 }
+                              size: 10 }
                 };
                 data[count] = (this["trace" + count])
                 
@@ -103,16 +111,115 @@ function salaryoverview(name){
                 yaxis: {
                     range: [0, maxgoals]
                 },
-                title:'Salary and Goals Overview - Top 100',
+                title:'Salary and Goals Overview - Top 50',
                 font: {
                     family: 'Courier New, monospace',
-                    size: 24
+                    size: 15
                 },
                 showlegend: false,
                 scrollZoom: true, 
-                responsive: true,
-                height : 800
+                
+                height : 600
             };
               
-            Plotly.newPlot('salarygoals', data, layout,{displayModeBar: false});
+            Plotly.newPlot('salarygoals', data, layout,{displayModeBar: false,
+                                                        responsive: true});
         })}
+
+        function salaryassists(div){
+            fetch(`/salaryassistsapi/${div}`)
+            .then(response => response.json()) 
+            .then(salaries =>{
+                var data = [];
+                var amount = [];
+                var assists = [];
+                var count = 0;
+                salaries.forEach(entry => {
+                    // list with extra data
+                    var exassists = `Expected Assists: ${entry['exassists']}`;
+                    amount[count] = entry['yearlysalary'];
+                    assists[count] = entry['assists'];
+                    this["trace" + count] = {
+                        x : [entry['yearlysalary']],
+                        y : [entry['assists']],
+                        mode: 'markers',
+                        type: 'scatter',
+                        name : entry['name'],
+                        text : [entry['position'], exassists],
+                        marker: { color: 'blue',
+                                  size: 10 }
+                    };
+                    data[count] = (this["trace" + count])
+                    count++;
+                })
+                var maxsal = Math.max(amount)
+                var maxassists = Math.max(assists)
+                var layout = {
+                    xaxis: {
+                        range: [ 0, maxsal ]
+                    },
+                    yaxis: {
+                        range: [0, maxassists]
+                    },
+                    title:'Salary and Assists Overview - Top 50',
+                    font: {
+                            family: 'Courier New, monospace',
+                            size: 15
+                    },
+                    showlegend: false,
+                    scrollZoom: true, 
+                    height : 600
+                };
+                  
+                Plotly.newPlot('salaryassists', data, layout, {displayModeBar: false,
+                                                               responsive: true});
+            })}
+
+        function salarytackles(div){
+            fetch(`/salarytacklesapi/${div}`)
+            .then(response => response.json()) 
+            .then(salaries =>{
+                var data = [];
+                var amount = [];
+                var tackles = [];
+                var count = 0;
+                salaries.forEach(entry => {
+                    // list with extra data
+                    var extackles = `Expected Tackles: ${entry['sucessvsdribble']}`;
+                    amount[count] = entry['yearlysalary'];
+                    tackles[count] = entry['tackles'];
+                    this["trace" + count] = {
+                        x : [entry['yearlysalary']],
+                        y : [entry['tackles']],
+                        mode: 'markers',
+                        type: 'scatter',
+                        name : entry['name'],
+                        text : [entry['position'], extackles],
+                        marker: { color: 'orange',
+                                    size: 10 }
+                    };
+                    data[count] = (this["trace" + count])
+                    count++;
+                })
+                var maxsal = Math.max(amount)
+                var maxassists = Math.max(tackles)
+                var layout = {
+                    xaxis: {
+                        range: [ 0, maxsal ]
+                    },
+                    yaxis: {
+                        range: [0, maxassists]
+                    },
+                    title:'Salary and Tackles Overview - Top 100',
+                    font: {
+                            family: 'Courier New, monospace',
+                            size: 15
+                    },
+                    showlegend: false,
+                    scrollZoom: true, 
+                    height : 600
+                };
+                    
+                Plotly.newPlot('salarytackles', data, layout, {displayModeBar: false,
+                                                                responsive: true});
+            })}
