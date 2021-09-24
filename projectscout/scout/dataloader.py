@@ -2,6 +2,7 @@ from .models import MiscStats, League, Player, PlayingTime, SalaryStats, Shootin
 import csv
 import json
 
+# Data loader takes the uploaded files and formats them to be inserted in the db properly, one function for each model.
 def team_mgmt(request):
     if request.method == 'POST':
         try:
