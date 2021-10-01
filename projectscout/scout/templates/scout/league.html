@@ -6,9 +6,17 @@
 {% endblock %}
 
 {% block body %}
+<div class="btn-group">
+  <a class="btn btn-sucess dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Select Team
+  </a>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
     {% for team in teams %}    
-        <a href="{% url 'team' team.name %}"><span id="{{team.name}}" class="badge badge-pill badge-success teamnames">{{team.name}}</span></a>
+        <a href="{% url 'team' team.name %}" id="{{team.name}}" class="dropdown-item teamnames">{{team.name}}</a>
     {% endfor %}
+  </div>
+</div>
     <div id="salaryoverview"></div>
     <div id="salarygoals"></div>
     <div id="salaryassists"></div>

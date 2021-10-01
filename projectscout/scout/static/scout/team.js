@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const teamname = window.location.pathname.split('/')[2];
-    get_team(teamname);
+    
     salaryoverview(teamname);
 })
 
@@ -126,28 +126,3 @@ function salaryoverview(name){
     });      
 };
 
-
-function get_team(name){
-    fetch(`/teamapi/${name}`)
-    .then(response => response.json())
-    .then(statslist =>{
-        var playernames = []
-        statslist.forEach(stat=>{
-            if (stat['name'] != undefined){
-           playernames.push(stat['name'])
-            }
-        });
-        
-        playernames.forEach(player=>{
-            statslist.forEach(stat=>{
-                if (stat['name'] == player || stat['player'] == player){
-                    var keys = Object.keys(stat)
-                    
-                    
-                }
-            });
-        });
-        
-    })
-    .catch(error => console.log('error:', error));
-}

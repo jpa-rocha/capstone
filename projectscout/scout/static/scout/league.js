@@ -210,7 +210,7 @@ function salaryoverview(name){
                     yaxis: {
                         range: [0, maxassists]
                     },
-                    title:'Salary and Tackles Overview - Top 100',
+                    title:'Salary and Tackles Overview - Top 50',
                     font: {
                             family: 'Courier New, monospace',
                             size: 15

@@ -371,22 +371,6 @@ def register(request):
 # APIs
 # teams
 # Calls db and collects some player information
-def teamapi(request, team_name):
-    team = Team.objects.get(name=team_name)
-    players = Player.objects.filter(team_id=team.id)
-    misc = MiscStats.objects.filter(player__in = players)
-    aerial = AerialDuels.objects.filter(player__in = players)
-    shooting = ShootingStats.objects.filter(player__in = players)
-    possession = PossessionStats.objects.filter(player__in = players)
-    passing = PassingStats.objects.filter(player__in = players)
-    passtypes = PassTypesStats.objects.filter(player__in = players)
-    defensive = DefensiveStats.objects.filter(player__in = players)
-    gsc = GoalShotCreationStats.objects.filter(player__in = players)
-    goalkeeping = GoalkeepingStats.objects.filter(player__in = players)
-    salaries = SalaryStats.objects.filter(player__in = players)
-    teamreport = chain(players, misc, aerial, shooting, possession, passing, passtypes, defensive, gsc, goalkeeping, salaries)
-
-    return JsonResponse([player.serialize() for player in teamreport], safe=False)
 
 #Calls db and collects player salary information, does the math to identify certain percentiles and the average
 def salaryoverviewapi(request, lORt_name):

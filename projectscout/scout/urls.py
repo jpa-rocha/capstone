@@ -16,7 +16,6 @@ urlpatterns = [
     path('register', views.register, name='register'),
 
     #APIs
-    path('teamapi/<str:team_name>', views.teamapi, name='teamapi'),
     path('teamsalaryapi/<str:team_name>', views.teamsalaryapi, name='teamsalaryapi'),
     path('salaryoverviewapi/<str:lORt_name>', views.salaryoverviewapi, name='salaryoverviewapi'),
     path('totalsalaryapi', views.totalsalaryapi, name='totalsalaryapi'),
