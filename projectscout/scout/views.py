@@ -39,7 +39,9 @@ def team(request, team_name):
     players = Player.objects.filter(team = team)
     salaryinfo = SalaryStats.objects.filter(player__in=players)
     leagues = League.objects.all()
-
+    league = League.objects.get(id = team.league_id)
+    teams = Team.objects.filter(league=league.id)
+    teams = teams.order_by('name').all()
     # Salary information for selected team
     startersalary =[]
     reservesalary =[]
@@ -55,6 +57,7 @@ def team(request, team_name):
 
     return render(request, "scout/team.html", {
         'team' : team_name,
+        'teams' : teams,
         'teamstats' : teamstats,
         'startersalary' : startersalary,
         'reservesalary' : reservesalary,
