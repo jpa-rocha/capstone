@@ -6,6 +6,7 @@ import json
 def team_mgmt(request):
     if request.method == 'POST':
         try:
+            Team.objects.all().delete()
             teamsfile = request.FILES['teams'].read().decode('UTF-8').splitlines()
             # Ready CSV
             teams = csv.reader(teamsfile)
@@ -37,6 +38,7 @@ def team_mgmt(request):
 def player_mgmt(request):
     if request.method == 'POST':
         try:
+            Player.objects.all().delete()
             playerfile = request.FILES['players'].read().decode('UTF-8').splitlines()
             # Ready CSV
             players = csv.reader(playerfile)
@@ -72,6 +74,7 @@ def player_mgmt(request):
 def time_mgmt(request):
     if request.method == 'POST':
         try:
+            PlayingTime.objects.all().delete()
             timefile = request.FILES['time'].read().decode('UTF-8').splitlines()
             # Ready CSV
             time = csv.reader(timefile)
@@ -102,6 +105,7 @@ def time_mgmt(request):
 def miscstats_mgmt(request):
      if request.method == 'POST':
         try:
+            MiscStats.objects.all().delete()
             miscstatsfile = request.FILES['misc'].read().decode('UTF-8').splitlines()
             # Ready CSV
             miscstats = csv.reader(miscstatsfile)
@@ -135,6 +139,7 @@ def miscstats_mgmt(request):
 def aerialstats_mgmt(request):
     if request.method == 'POST':
         try:
+            AerialDuels.objects.all().delete()
             aerialstatsfile = request.FILES['aerial'].read().decode('UTF-8').splitlines()
             # Ready CSV
             aerialstats = csv.reader(aerialstatsfile)
@@ -165,6 +170,7 @@ def aerialstats_mgmt(request):
 def shootingstats_mgmt(request):
     if request.method == 'POST':
         try:
+            ShootingStats.objects.all().delete()
             shootingstatsfile = request.FILES['shooting'].read().decode('UTF-8').splitlines()
             # Ready CSV
             shootingstats = csv.reader(shootingstatsfile)
@@ -202,6 +208,7 @@ def shootingstats_mgmt(request):
 def possessionstats_mgmt(request):
     if request.method == 'POST':
         try:
+            PossessionStats.objects.all().delete()
             possessionstatsfile = request.FILES['possession'].read().decode('UTF-8').splitlines()
             # Ready CSV
             possessionstats = csv.reader(possessionstatsfile)
@@ -242,6 +249,7 @@ def possessionstats_mgmt(request):
 def passingstats_mgmt(request):
     if request.method == 'POST':
         try:
+            PassingStats.objects.all().delete()
             passingstatsfile = request.FILES['passing'].read().decode('UTF-8').splitlines()
             # Ready CSV
             passingstats = csv.reader(passingstatsfile)
@@ -282,6 +290,7 @@ def passingstats_mgmt(request):
 def passtypesstats_mgmt(request):
     if request.method == 'POST':
         try:
+            PassTypesStats.objects.all().delete()
             passtypesstatsfile = request.FILES['passtypes'].read().decode('UTF-8').splitlines()
             # Ready CSV
             passtypesstats = csv.reader(passtypesstatsfile)
@@ -322,6 +331,7 @@ def passtypesstats_mgmt(request):
 def defensivestats_mgmt(request):
     if request.method == 'POST':
         try:
+            DefensiveStats.objects.all().delete()
             defensivestatsfile = request.FILES['defensive'].read().decode('UTF-8').splitlines()
             # Ready CSV
             defensivestats = csv.reader(defensivestatsfile)
@@ -362,6 +372,7 @@ def defensivestats_mgmt(request):
 def goalshotcreationstats_mgmt(request):
     if request.method == 'POST':
         try:
+            GoalShotCreationStats.objects.all().delete()
             goalshotcreationstatsfile = request.FILES['goalshotcreation'].read().decode('UTF-8').splitlines()
             # Ready CSV
             goalshotcreationstats = csv.reader(goalshotcreationstatsfile)
@@ -399,6 +410,7 @@ def goalshotcreationstats_mgmt(request):
 def goalkeepingstats_mgmt(request):
     if request.method == 'POST':
         try:
+            GoalkeepingStats.objects.all().delete()
             goalkeepingstatsfile = request.FILES['goalkeeping'].read().decode('UTF-8').splitlines()
             # Ready CSV
             goalkeepingstats = csv.reader(goalkeepingstatsfile)
@@ -469,6 +481,7 @@ def salary_mgmt(request):
 def genteamstats_mgmt(request):
     if request.method == 'POST':
         try:
+            TeamStats.objects.all().delete()
             genteamstatsfile = request.FILES['genteamstats'].read().decode('UTF-8').splitlines()
             # Ready CSV
             
