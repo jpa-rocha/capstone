@@ -16,6 +16,18 @@ from itertools import chain
 
 # Create your views here.
 def index(request):
+    leaguestart = League.objects.all()
+    if not leaguestart:
+        bundesliga = League.objects.create(name = "Bundesliga")
+        bundesliga.save()
+        laliga = League.objects.create(name = "La Liga")
+        laliga.save()
+        ligueune = League.objects.create(name = "Ligue 1")
+        ligueune.save()
+        seriea = League.objects.create(name = "Serie A")
+        seriea.save()
+        premierleague = League.objects.create(name = "Premier League")
+        premierleague.save()      
     teams = Team.objects.all()
     teams = teams.order_by('league').all()
     leagues = League.objects.all()
@@ -303,7 +315,7 @@ def upload_files(request):
         # Directs GENERAL TEAM STATS updates to the appropriate manager
         elif request.POST.get('genteamstats'):
             try:
-                if request.FILES['genteamstats'].name == 'cleanleaguestats.csv':
+                if request.FILES['genteamstats'].name == 'genleaguestats.csv':
                     
                     if genteamstats_mgmt(request) == 'Y':
                         return HttpResponse(status=204)

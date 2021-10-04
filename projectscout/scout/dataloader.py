@@ -58,10 +58,18 @@ def player_mgmt(request):
             for player in playerlist:
                 team = Team.objects.get(name = player[3])
                 playercheck = Player.objects.filter(name = player[0], team=team)
+                if player[2][0] == 'G':
+                    posord = 1
+                elif player[2][0] == 'D':
+                    posord = 2
+                elif player[2][0] == 'M':
+                    posord = 3
+                elif player[2][0] == 'F':
+                    posord = 4
                 if playercheck.exists():
                     pass
                 else:
-                    newplayer = Player.objects.create(name = player[0], country = player[1], position = player[2], team=team, yearborn = player[4])
+                    newplayer = Player.objects.create(name = player[0], country = player[1], position = player[2], team=team, yearborn = player[4], posord = posord)
                     newplayer.save()      
             result = 'Y'
             return result
@@ -226,16 +234,16 @@ def possessionstats_mgmt(request):
                     if statcheck.exists():
                         pass
                     else:
-                        newstat = PossessionStats.objects.create(player=player, touches = entry[1], defensivebox = entry[2],
-                                                            defensive3rd = entry[3], middle3rd = entry[4],
-                                                            attacking3rd = entry[5], attackingbox = entry[6], 
-                                                            liveball = entry[7], sucessfuldribbles = entry[8],
-                                                            attempteddribbles = entry[9], dribblesucesspercentage = entry[10], 
-                                                            playerspassed = entry[11], carries = entry[12], totaldistance = entry[13], 
-                                                            progressivedistance = entry[14], progressivecarries = entry[15], 
-                                                            carrieslast3rd = entry[16], carriesattackingbox = entry[17], miscarries = entry[18],
-                                                            disarmed = entry[19], targeted = entry[20], recieved = entry[21],
-                                                            recievedsucesspercentage = entry[22], progressivepassesrecieved = entry[23])
+                        newstat = PossessionStats.objects.create(player=player, touches = entry[1], touchesdefbox = entry[2],
+                                                          touchesdef3rd = entry[3], touchesmid3rd = entry[4],
+                                                          touchesatt3rd = entry[5], touchesattbox = entry[6], 
+                                                          liveball = entry[7], sucessfuldribbles = entry[8],
+                                                          attempteddribbles = entry[9], dribblesucesspercentage = entry[10], 
+                                                          playerspassed = entry[11], carries = entry[12], totaldistance = entry[13], 
+                                                          progressivedistance = entry[14], progressivecarries = entry[15], 
+                                                          carrieslast3rd = entry[16], carriesattackingbox = entry[17], miscarries = entry[18],
+                                                          disarmed = entry[19], targeted = entry[20], recieved = entry[21],
+                                                          recievedsucesspercentage = entry[22], progressivepassesrecieved = entry[23])
                         
                         newstat.save()
             
