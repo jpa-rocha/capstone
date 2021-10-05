@@ -75,3 +75,12 @@ The plan was to have a fast way to check how much teams pay for different result
 ## projectscout/scout/csv data/
 >> Here are the the original and fixed CSVs files to populate the db (courtesy of https://fbref.com/en/), when the original CSVs are corrected with datahandler.py they are formated and sent to the fixed folder, the fixed CSVs can be uploaded to the upload.html
 
+# How to run the application:
+
+As all the files necessary to populate the database are already present, when the initial migration is made, a superuser will need to be created and the correct CSVs and JSON files will need to be uploaded on the "upload" page.
+The CSV files are located at "projectscout/scout/csv data/cleaned" and the names on the files reflect the names on the upload fields.
+The only exception is the "Salary Stats", this upload field will take "fixedcontractinfo.json" which is located in "projectscout/".
+After all files are uploaded properly (it may take some time), the information and graph will fill the pages automatically and some stats will be able to be seen.
+
+# Future:
+More performance stats can be linked to players salaries, and some investigation into tensowflow lite shows that it would be possible to aggregate players by desired stats/salary and teams/users could have player recommendations for desired salaries or stats. 
